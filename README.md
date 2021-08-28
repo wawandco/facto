@@ -118,10 +118,10 @@ func EventFactory(f facto.Helper) facto.Product {
     event := Event{
         // Here we pull the User from the helper given we know there is a 
         // factory for it.
-		User: f.Build("User").(User),
-		Type: "Something",
-	}
-    
+        User: f.Build("User").(User),
+        Type: "Something",
+    }
+
     return facto.Product(event)
 })
 ```
@@ -164,11 +164,11 @@ func EventFactory(f facto.Helper) facto.Product {
     event := Event{
         // Here we pull the User from the helper given we know there is a 
         // factory that adds it. If there was not one it would be generated new.
-		UserID: f.NamedUUID("owner_id"),
-		Type: "Something",
-	}
+        UserID: f.NamedUUID("owner_id"),
+        Type: "Something",
+    }
 
-	return facto.Product(event)
+    return facto.Product(event)
 })
 ```
 
