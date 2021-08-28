@@ -174,7 +174,7 @@ func EventFactory(f facto.Helper) facto.Product {
 
 ### Faking data
 
-Sometimes you need to generate data that is not realistic, in that case you can use the `factory.Fake` method on your factory to generate fake data, for example:
+Sometimes you need to generate data that is not real but at least looks similar to what the real data will be. To solve that need Facto provides `factory.Fake`, within your factory you can use it to generate fake data. for example:
 
 ```go
 //  in factories/event.go
