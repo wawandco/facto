@@ -16,7 +16,27 @@ Once initialized you can generate your first factory with:
 facto generate user
 ```
 
-This generates the `factories/user.go` and (`factories/factories.go` in case it does not exist).
+This generates the `factories/user.go` and (`factories/factories.go` in case it does not exist) at this moment the user factory looks like:
+
+```go
+//  in factories/user.go
+package factories
+
+import (
+    "github.com/paganotoni/facto"
+)
+
+func init() {
+    // User is how the factory will be invoked.
+    facto.Register("User", UserFactory)
+}
+
+func UserFactory(f facto.Helper) facto.Product {
+    // defaults to nil, once generated you will need to add the 
+    // fixture logic in here.
+    return nil
+}
+```
 
 ### Your first Factory
 
@@ -35,10 +55,12 @@ func init() {
     facto.Register("User", UserFactory)
 }
 
-func UserFactory(f facto.Helper) interface{} {
-    return &User{
+func UserFactory(f facto.Helper) facto.Product {
+    user := User{
         Name: f.Fake.Name(),
     }
+
+    return facto.Product(user)
 }
 ```
 
@@ -84,19 +106,23 @@ func init() {
     facto.Register("Event", UserFactory)
 }
 
-func UserFactory(f facto.Helper) interface{} {
-    return &User{
+func UserFactory(f facto.Helper) facto.Product {
+    user := User{
         Name: f.Fake.Name(),
     }
+
+    return facto.Product(user)
 }
 
-func EventFactory(f facto.Helper) interface{} {
-	return Event{
+func EventFactory(f facto.Helper) facto.Product {
+    event := Event{
         // Here we pull the User from the helper given we know there is a 
         // factory for it.
 		User: f.Build("User").(User),
 		Type: "Something",
 	}
+    
+    return facto.Product(event)
 })
 ```
 
@@ -113,13 +139,15 @@ func init() {
     facto.Register("User", UserFactory)
 }
 
-func UserFactory(f facto.Helper) interface{} {
-    return &User{
+func UserFactory(f facto.Helper) facto.Product {
+    user := User{
         // owner_id will be assigned the generated UUID 
         // and any 
         ID: f.NamedUUID("owner_id"),
         Name: f.Fake.Name(),
     }
+    
+    return facto.Product(user)
 }
 
 //  in factories/event.go
@@ -132,13 +160,15 @@ func init() {
     facto.Register("Event", EventFactory)
 }
 
-func EventFactory(f facto.Helper) interface{} {
-	return Event{
+func EventFactory(f facto.Helper) facto.Product {
+    event := Event{
         // Here we pull the User from the helper given we know there is a 
         // factory that adds it. If there was not one it would be generated new.
 		UserID: f.NamedUUID("owner_id"),
 		Type: "Something",
 	}
+
+	return facto.Product(event)
 })
 ```
 
@@ -157,8 +187,8 @@ func init() {
     facto.Register("Event", EventFactory)
 }
 
-func EventFactory(f facto.Helper) interface{} {
-	return Event{
+func EventFactory(f facto.Helper) facto.Product {
+    event := Event{
         Name: f.Fake("Name"),
 		Type: "Sports",
 
@@ -166,6 +196,8 @@ func EventFactory(f facto.Helper) interface{} {
         Company: f.Fake("Company"),
         Address: f.Fake("Address"),
 	}
+
+	return facto.Product(event)
 })
 ```
 
@@ -173,11 +205,17 @@ The full list of available fake data generators can be found in [here](link-to-r
 
 ### The CLI
 
-The Facto CLI is a simple command line tool that allows you to generate fixtures and initialize your project for fixtures generation. It contains the following commands to facilitate the use of Facto:
+The Facto CLI is a simple command line tool that allows you to generate fixtures files. It contains the following commands to facilitate the use of Facto:
 
  * `facto generate`: Generates fixtures for your project.
  * `facto list --help`: Shows the list of factories in the current codebase.
  * `facto version`: The version of the Facto CLI.
 
 
+-------------
 
+### Other topics
+
+- Sequences
+- Create vs Build
+- Registry API (Not in love with using init())
