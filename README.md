@@ -16,7 +16,7 @@ Once initialized you can generate your first factory with:
 facto generate user
 ```
 
-This generates the `factories/user.go` file as well as the `factories/factories.go` file.
+This generates the `factories/user.go` and (`factories/factories.go` in case it does not exist).
 
 ### Your first Factory
 
