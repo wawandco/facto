@@ -196,7 +196,7 @@ func EventFactory(f facto.Helper) facto.Product {
         Address: f.Fake("Address"),
     }
 
-	return facto.Product(event)
+    return facto.Product(event)
 })
 ```
 
