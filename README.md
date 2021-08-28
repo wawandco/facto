@@ -191,7 +191,6 @@ func EventFactory(f facto.Helper) facto.Product {
     event := Event{
         Name: f.Fake("Name"),
 		Type: "Sports",
-
         ContactEmail: f.Fake("Email"),
         Company: f.Fake("Company"),
         Address: f.Fake("Address"),
