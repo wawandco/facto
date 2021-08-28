@@ -203,7 +203,7 @@ The full list of available fake data generators can be found in [here](link-to-r
 The Facto CLI is a simple command line tool that allows you to generate fixtures files. It contains the following commands to facilitate the use of Facto:
 
  * `facto generate`: Generates fixtures for your project.
- * `facto list --help`: Shows the list of factories in the current codebase.
+ * `facto list`: Shows the list of factories in the current codebase.
  * `facto version`: The version of the Facto CLI.
 
 
