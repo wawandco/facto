@@ -82,7 +82,14 @@ Then on your test file you can use the factory by calling:
 //  in test/user_test.go
 package user_test
 
+import (
+    "your/package/factories"
+)
+
 func TestUser(t *testing.T) {
+    // Load the factories
+    factories.Load()
+
     user := facto.Build("User").(models.User)
     // use user for test purposes ...
 }
