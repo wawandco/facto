@@ -7,7 +7,7 @@ Facto is a fixtures library with a definition syntax. It aims to allow Go develo
 To get started install the Facto CLI, it will allow you to perform basic operations on your fixtures.
 
 ```sh
-go get github.com/paganotoni/facto@latest
+go get github.com/paganotoni/facto/cmd/facto@latest
 ```
 
 Once initialized you can generate your first factory with:
