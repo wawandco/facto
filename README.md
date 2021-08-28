@@ -7,7 +7,7 @@ Facto is a fixtures library with a definition syntax. It aims to allow Go develo
 To get started install the Facto CLI, it will allow you to perform basic operations on your fixtures.
 
 ```sh
-go get github.com/paganotoni/facto/cmd/facto@latest
+go install github.com/paganotoni/facto/cmd/facto@latest
 ```
 
 Once initialized you can generate your first factory with:
@@ -142,11 +142,39 @@ func EventFactory(f facto.Helper) interface{} {
 })
 ```
 
+### Faking data
+
+Sometimes you need to generate data that is not realistic, in that case you can use the `factory.Fake` method on your factory to generate fake data, for example:
+
+```go
+//  in factories/event.go
+package factories
+import (
+    "github.com/paganotoni/facto"
+)
+
+func init() {
+    facto.Register("Event", EventFactory)
+}
+
+func EventFactory(f facto.Helper) interface{} {
+	return Event{
+        Name: f.Fake("Name"),
+		Type: "Sports",
+
+        ContactEmail: f.Fake("Email"),
+        Company: f.Fake("Company"),
+        Address: f.Fake("Address"),
+	}
+})
+```
+
+The full list of available fake data generators can be found in [here](link-to-repo).
+
 ### The CLI
 
 The Facto CLI is a simple command line tool that allows you to generate fixtures and initialize your project for fixtures generation. It contains the following commands to facilitate the use of Facto:
 
- * `facto init`: Initializes a new project for Facto.
  * `facto generate`: Generates fixtures for your project.
  * `facto list --help`: Shows the list of factories in the current codebase.
  * `facto version`: The version of the Facto CLI.
