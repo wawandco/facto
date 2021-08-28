@@ -16,7 +16,27 @@ Once initialized you can generate your first factory with:
 facto generate user
 ```
 
-This generates the `factories/user.go` and (`factories/factories.go` in case it does not exist) at this moment the user factory looks like:
+This generates `factories/factories.go` which looks like this:
+```go
+//  in factories/user.go
+package factories
+
+import (
+    "github.com/paganotoni/facto"
+)
+
+// Load all of the factories into facto to make them available for tests.
+// Inside this function we will add the rest of the factories, 
+// Facto will add newly generated factories to this function. Then 
+// Its expected that in your tests you invoke this function, p.e: factories.Load()
+func Load() {
+    // User is how the factory will be invoked, p.e. facto.Build("User)
+    facto.Register("User", UserFactory)
+}
+
+```
+
+As well as `factories/user.go`:
 
 ```go
 //  in factories/user.go
@@ -26,17 +46,14 @@ import (
     "github.com/paganotoni/facto"
 )
 
-func init() {
-    // User is how the factory will be invoked.
-    facto.Register("User", UserFactory)
-}
-
 func UserFactory(f facto.Helper) facto.Product {
     // defaults to nil, once generated you will need to add the 
     // fixture logic in here.
     return nil
 }
 ```
+
+It's important that before your tests you call factories.Load() to load your factories before the test. Some testing libraries provide a way to do this on a single place.
 
 ### Your first Factory
 
@@ -49,11 +66,6 @@ package factories
 import (
     "github.com/paganotoni/facto"
 )
-
-func init() {
-    // User is how the factory will be invoked.
-    facto.Register("User", UserFactory)
-}
 
 func UserFactory(f facto.Helper) facto.Product {
     user := User{
@@ -76,7 +88,7 @@ func TestUser(t *testing.T) {
 }
 ```
 
-### Building N objects
+### Building N   
 Sometimes you need to build more than one instance of an object, in that case. Facto provides a helper to do that:
 
 ```go
@@ -101,11 +113,6 @@ import (
     "github.com/paganotoni/facto"
 )
 
-func init() {
-    facto.Register("User", UserFactory)
-    facto.Register("Event", UserFactory)
-}
-
 func UserFactory(f facto.Helper) facto.Product {
     user := User{
         Name: f.Fake.Name(),
@@ -117,7 +124,8 @@ func UserFactory(f facto.Helper) facto.Product {
 func EventFactory(f facto.Helper) facto.Product {
     event := Event{
         // Here we pull the User from the helper given we know there is a 
-        // factory for it.
+        // factory for it, assuming it was registered in the factories.Load() as `User` we
+        // can use it like this:
         User: f.Build("User").(User),
         Type: "Something",
     }
@@ -135,10 +143,6 @@ import (
     "github.com/paganotoni/facto"
 )
 
-func init() {
-    facto.Register("User", UserFactory)
-}
-
 func UserFactory(f facto.Helper) facto.Product {
     user := User{
         // owner_id will be assigned the generated UUID 
@@ -155,10 +159,6 @@ package factories
 import (
     "github.com/paganotoni/facto"
 )
-
-func init() {
-    facto.Register("Event", EventFactory)
-}
 
 func EventFactory(f facto.Helper) facto.Product {
     event := Event{
@@ -182,10 +182,6 @@ package factories
 import (
     "github.com/paganotoni/facto"
 )
-
-func init() {
-    facto.Register("Event", EventFactory)
-}
 
 func EventFactory(f facto.Helper) facto.Product {
     event := Event{
@@ -215,6 +211,7 @@ The Facto CLI is a simple command line tool that allows you to generate fixtures
 
 ### Other topics
 
+- Registry API ()
 - Sequences
 - Create vs Build
-- Registry API (Not in love with using init())
+- Register custom values within the factory.
