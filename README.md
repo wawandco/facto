@@ -237,12 +237,12 @@ The Facto CLI is a simple command line tool that allows you to generate fixtures
 
 
 -------------
+### Good to go
 
+- Registry API ✅: Good for the first pass.
+- Sequences ✅: Index field.
 ### Other topics
 
-- Registry API
-- Sequences
 - Create vs Build
-- Register custom values within the factory.
 - Review terminology from Factory bot.
 - Explain the "Magic" constraints and some principles.
