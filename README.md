@@ -91,12 +91,20 @@ func TestUser(t *testing.T) {
     factories.Load()
 
     user := facto.Build("User").(models.User)
+    err := db.Create(&user)
     // use user for test purposes ...
+
+    // Another alternative is to use create, which will attempt at creating the object directly in your database.
+    // In which case the user variable has already been stored in the database.
+    p, err := facto.Create("User")
+    user := p.(models.User)
+    // use user for test purposes ...
+
 }
 ```
 
-### Building N   
-Sometimes you need to build more than one instance of an object, in that case. Facto provides a helper to do that:
+### Building/Creating N   
+Sometimes you need to build more than one instance of an object, in that case. Facto provides 2 functions to do that: `BuildN` and `CreateN`.
 
 ```go
 //  in test/user_test.go
@@ -105,6 +113,11 @@ package user_test
 func TestUser(t *testing.T) {
     users := facto.BuildN("User", 10).([]models.User)
     // use users for test purposes ...
+    
+    // you can also create N Users
+    p, err := facto.CreateN("User", 10)
+    // make sure you check the error
+    users := p.([]models.User)
 }
 
 ```
@@ -241,8 +254,8 @@ The Facto CLI is a simple command line tool that allows you to generate fixtures
 
 - Registry API ✅: Good for the first pass.
 - Sequences ✅: Index field.
+- Create API ✅: Create a new object in the database.
 ### Other topics
-
-- Create vs Build
+- Custom creators: Allow to use your custom library to persist objects in the DB.
 - Review terminology from Factory bot.
 - Explain the "Magic" constraints and some principles.
