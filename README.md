@@ -103,11 +103,33 @@ Sometimes you need to build more than one instance of an object, in that case. F
 package user_test
 
 func TestUser(t *testing.T) {
-    users := facto.BuildN("User").([]models.User)
+    users := facto.BuildN("User", 10).([]models.User)
     // use users for test purposes ...
 }
 
 ```
+
+When running `BuildN` you can use the Index variable to get the index of the object being built. This is useful when you need to build a list of objects and you want to know which one is being built.
+
+```go
+//  in factories/user.go
+package factories
+
+import (
+    "fmt"
+    "github.com/paganotoni/facto"
+)
+
+func UserFactory(f facto.Helper) facto.Product {
+    user := User{
+        Name: fmt.Sprintf("User %d", f.Index),
+    }
+
+    return facto.Product(user)
+}
+```
+
+When the factory gets called individually Index will be 0.
 
 ### Dependent factories
 
@@ -218,7 +240,7 @@ The Facto CLI is a simple command line tool that allows you to generate fixtures
 
 ### Other topics
 
-- Registry API ()
+- Registry API
 - Sequences
 - Create vs Build
 - Register custom values within the factory.
