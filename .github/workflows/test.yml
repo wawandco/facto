@@ -28,5 +28,4 @@ jobs:
 
       - name: Test
         run: |
-          go mod tidy -v
           go test -tags "sqlite" -cover  ./...
