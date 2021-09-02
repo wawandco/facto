@@ -45,8 +45,7 @@ func Build(factoryName string) Product {
 	defer mu.Unlock()
 
 	if factory, ok := factoriesRegistry[factoryName]; ok {
-		h := Helper{Index: 1}
-		return factory(h)
+		return factory(Helper{Index: 1})
 	}
 
 	return nil

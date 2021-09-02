@@ -6,7 +6,6 @@ import (
 	"testing"
 
 	"github.com/paganotoni/facto"
-	"github.com/stretchr/testify/require"
 )
 
 type User struct {
@@ -14,8 +13,6 @@ type User struct {
 }
 
 func Test_Build(t *testing.T) {
-	a := require.New(t)
-
 	facto.Register("User", func(f facto.Helper) facto.Product {
 		u := User{
 			Name: "Wawandco",
@@ -24,12 +21,12 @@ func Test_Build(t *testing.T) {
 	})
 
 	userProduct := facto.Build("User").(User)
-	a.Equal("Wawandco", userProduct.Name)
+	if userProduct.Name != "Wawandco" {
+		t.Errorf("expected '%s' but got '%s'", "Wawandco", userProduct.Name)
+	}
 }
 
 func Test_BuildN(t *testing.T) {
-	a := require.New(t)
-
 	facto.Register("Users", func(f facto.Helper) facto.Product {
 		u := User{
 			Name: fmt.Sprintf("Wawandco %d", f.Index),
@@ -40,13 +37,13 @@ func Test_BuildN(t *testing.T) {
 	usersProduct := facto.BuildN("Users", 5).([]User)
 
 	for i := 0; i < 5; i++ {
-		a.Equal(fmt.Sprintf("Wawandco %d", i+1), usersProduct[i].Name)
+		if fmt.Sprintf("Wawandco %d", i+1) != usersProduct[i].Name {
+			t.Errorf("expected '%s' but got '%s'", fmt.Sprintf("Wawandco %d", i+1), usersProduct[i].Name)
+		}
 	}
 }
 
 func Test_Build_Concurrently(t *testing.T) {
-	a := require.New(t)
-
 	tcases := []struct {
 		factoryName string
 		factory     facto.Factory
@@ -102,7 +99,9 @@ func Test_Build_Concurrently(t *testing.T) {
 		go func() {
 			defer wgbuild.Done()
 			userProduct := facto.Build(tcases[i].factoryName).(User)
-			a.Equal(tcases[i].expected, userProduct.Name, fmt.Sprintf("case %d", i+1))
+			if tcases[i].expected != userProduct.Name {
+				t.Errorf("expected '%s' but got '%s' in '%s'", tcases[i].expected, userProduct.Name, fmt.Sprintf("case %d", i+1))
+			}
 		}()
 	}
 	wgbuild.Wait()
