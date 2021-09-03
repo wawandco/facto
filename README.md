@@ -157,7 +157,7 @@ import (
 
 func UserFactory(f facto.Helper) facto.Product {
     user := User{
-        Name: f.Fake.Name(),
+        Name: f.Fake.FirstName(),
     }
 
     return facto.Product(user)
@@ -190,7 +190,7 @@ func UserFactory(f facto.Helper) facto.Product {
         // owner_id will be assigned the generated UUID 
         // and any 
         ID: f.NamedUUID("owner_id"),
-        Name: f.Fake.Name(),
+        Name: f.Faker.FirstName(),
     }
     
     return facto.Product(user)
@@ -227,11 +227,11 @@ import (
 
 func EventFactory(f facto.Helper) facto.Product {
     event := Event{
-        Name: f.Fake("Name"),
+        Name: f.Faker.FirstName(),
         Type: "Sports",
-        ContactEmail: f.Fake("Email"),
-        Company: f.Fake("Company"),
-        Address: f.Fake("Address"),
+        ContactEmail: f.Faker.Email(),
+        Company: f.Faker.Company(),
+        Address: f.Faker.Address(),
     }
 
     return facto.Product(event)

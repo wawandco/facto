@@ -5,15 +5,6 @@ import (
 	"sync"
 )
 
-// Product is an abstract representation of
-// a factory is able to built.
-type Product interface{}
-
-// Helper
-type Helper struct {
-	Index int
-}
-
 // Factory represents the builder of a Product.
 type Factory func(f Helper) Product
 
