@@ -12,7 +12,18 @@ type User struct {
 	Name string
 }
 
-func Test_Build(t *testing.T) {
+func TestBuild(t *testing.T) {
+	type event struct {
+		Name string
+		User User
+	}
+
+	type company struct {
+		Name         string
+		Address      string
+		ContactEmail string
+	}
+
 	facto.Register("User", func(f facto.Helper) facto.Product {
 		u := User{
 			Name: "Wawandco",
@@ -20,10 +31,42 @@ func Test_Build(t *testing.T) {
 		return facto.Product(u)
 	})
 
-	userProduct := facto.Build("User").(User)
-	if userProduct.Name != "Wawandco" {
-		t.Errorf("expected '%s' but got '%s'", "Wawandco", userProduct.Name)
-	}
+	facto.Register("Event", func(f facto.Helper) facto.Product {
+		u := event{
+			Name: "CLICK",
+			User: facto.Build("User").(User),
+		}
+
+		return facto.Product(u)
+	})
+
+	facto.Register("Company", func(f facto.Helper) facto.Product {
+		u := event{
+			Name: "CLICK",
+			User: facto.Build("User").(User),
+		}
+
+		return facto.Product(u)
+	})
+
+	t.Run("Simple", func(t *testing.T) {
+		userProduct := facto.Build("User").(User)
+		if userProduct.Name != "Wawandco" {
+			t.Errorf("expected '%s' but got '%s'", "Wawandco", userProduct.Name)
+		}
+	})
+
+	t.Run("Dependent", func(t *testing.T) {
+		event := facto.Build("Event").(event)
+		if event.Name != "CLICK" {
+			t.Errorf("expected '%s' but got '%s'", "CLICK", event.Name)
+		}
+
+		if event.User.Name != "Wawandco" {
+			t.Errorf("expected '%s' but got '%s'", "Wawandco", event.User.Name)
+		}
+	})
+
 }
 
 func TestBuildFakeData(t *testing.T) {

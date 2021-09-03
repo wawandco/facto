@@ -22,38 +22,3 @@ func TestHelperNamedUUID(t *testing.T) {
 		t.Errorf("Diferent named UUIDS should result in different values")
 	}
 }
-
-func TestHelperBuild(t *testing.T) {
-	h := &facto.Helper{Index: 1}
-
-	type parent struct {
-		Name string
-	}
-
-	type s struct {
-		Name   string
-		Parent parent
-	}
-
-	facto.Register("parent", func(h facto.Helper) facto.Product {
-		return parent{
-			Name: "Parent",
-		}
-	})
-
-	facto.Register("something", func(h facto.Helper) facto.Product {
-		return s{
-			Name:   "Child",
-			Parent: h.Build("parent").(parent),
-		}
-	})
-
-	p := h.Build("something").(s)
-	if p.Name != "Child" {
-		t.Errorf("Name should be Hello got %v", p.Name)
-	}
-
-	if p.Parent.Name != "Parent" {
-		t.Errorf("Should have build Parent %v", p.Name)
-	}
-}

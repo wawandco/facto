@@ -16,11 +16,6 @@ type Helper struct {
 	Faker faker
 }
 
-// Build a factory.
-func (h Helper) Build(name string) Product {
-	return Build(name)
-}
-
 // NamedUUID is a helper to create a UUID and keep it in the
 // Facto context for later use.
 func (h Helper) NamedUUID(name string) uuid.UUID {
