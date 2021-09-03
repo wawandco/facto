@@ -13,7 +13,7 @@ type User struct {
 }
 
 func Test_Build(t *testing.T) {
-	facto.Register("User", func(f *facto.Helper) facto.Product {
+	facto.Register("User", func(f facto.Helper) facto.Product {
 		u := User{
 			Name: "Wawandco",
 		}
@@ -27,7 +27,7 @@ func Test_Build(t *testing.T) {
 }
 
 func Test_BuildN(t *testing.T) {
-	facto.Register("Users", func(f *facto.Helper) facto.Product {
+	facto.Register("Users", func(f facto.Helper) facto.Product {
 		u := User{
 			Name: fmt.Sprintf("Wawandco %d", f.Index),
 		}
@@ -51,7 +51,7 @@ func Test_Build_Concurrently(t *testing.T) {
 	}{
 		{
 			factoryName: "UserNumberOne",
-			factory: func(f *facto.Helper) facto.Product {
+			factory: func(f facto.Helper) facto.Product {
 				u := User{
 					Name: "Wawandco",
 				}
@@ -62,7 +62,7 @@ func Test_Build_Concurrently(t *testing.T) {
 
 		{
 			factoryName: "UserNumberTwo",
-			factory: func(f *facto.Helper) facto.Product {
+			factory: func(f facto.Helper) facto.Product {
 				u := User{
 					Name: "Wawandco 2",
 				}
@@ -73,7 +73,7 @@ func Test_Build_Concurrently(t *testing.T) {
 
 		{
 			factoryName: "UserNumberThree",
-			factory: func(f *facto.Helper) facto.Product {
+			factory: func(f facto.Helper) facto.Product {
 				u := User{
 					Name: fmt.Sprintf("Wawandco %d", f.Index),
 				}

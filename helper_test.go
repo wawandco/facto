@@ -30,7 +30,7 @@ func TestHelperBuild(t *testing.T) {
 		Name string
 	}
 
-	facto.Register("something", func(h *facto.Helper) facto.Product {
+	facto.Register("something", func(h facto.Helper) facto.Product {
 		return s{
 			Name: "Hello",
 		}
