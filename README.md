@@ -67,9 +67,9 @@ import (
     "github.com/paganotoni/facto"
 )
 
-func UserFactory(f facto.Helper) facto.Product {
+func UserFactory(h facto.Helper) facto.Product {
     user := User{
-        Name: f.Fake.Name(),
+        Name: h.Fake.Name(),
     }
 
     return facto.Product(user)
@@ -133,7 +133,7 @@ import (
     "github.com/paganotoni/facto"
 )
 
-func UserFactory(f facto.Helper) facto.Product {
+func UserFactory(h facto.Helper) facto.Product {
     user := User{
         Name: fmt.Sprintf("User %d", f.Index),
     }
@@ -155,20 +155,20 @@ import (
     "github.com/paganotoni/facto"
 )
 
-func UserFactory(f facto.Helper) facto.Product {
+func UserFactory(h facto.Helper) facto.Product {
     user := User{
-        Name: f.Fake.FirstName(),
+        Name: h.Fake.FirstName(),
     }
 
     return facto.Product(user)
 }
 
-func EventFactory(f facto.Helper) facto.Product {
+func EventFactory(h facto.Helper) facto.Product {
     event := Event{
         // Here we pull the User from the helper given we know there is a 
         // factory for it, assuming it was registered in the factories.Load() as `User` we
         // can use it like this:
-        User: f.Build("User").(User),
+        User: facto.Build("User").(User),
         Type: "Something",
     }
 
@@ -185,12 +185,12 @@ import (
     "github.com/paganotoni/facto"
 )
 
-func UserFactory(f facto.Helper) facto.Product {
+func UserFactory(h facto.Helper) facto.Product {
     user := User{
         // owner_id will be assigned the generated UUID 
         // and any 
-        ID: f.NamedUUID("owner_id"),
-        Name: f.Faker.FirstName(),
+        ID: h.NamedUUID("owner_id"),
+        Name: h.Faker.FirstName(),
     }
     
     return facto.Product(user)
@@ -202,11 +202,11 @@ import (
     "github.com/paganotoni/facto"
 )
 
-func EventFactory(f facto.Helper) facto.Product {
+func EventFactory(h facto.Helper) facto.Product {
     event := Event{
         // Here we pull the User from the helper given we know there is a 
         // factory that adds it. If there was not one it would be generated new.
-        UserID: f.NamedUUID("owner_id"),
+        UserID: h.NamedUUID("owner_id"),
         Type: "Something",
     }
 
@@ -225,13 +225,13 @@ import (
     "github.com/paganotoni/facto"
 )
 
-func EventFactory(f facto.Helper) facto.Product {
+func EventFactory(h facto.Helper) facto.Product {
     event := Event{
-        Name: f.Faker.FirstName(),
+        Name: h.Faker.FirstName(),
         Type: "Sports",
-        ContactEmail: f.Faker.Email(),
-        Company: f.Faker.Company(),
-        Address: f.Faker.Address(),
+        ContactEmail: h.Faker.Email(),
+        Company: h.Faker.Company(),
+        Address: h.Faker.Address(),
     }
 
     return facto.Product(event)
@@ -239,6 +239,29 @@ func EventFactory(f facto.Helper) facto.Product {
 ```
 
 The full list of available fake data generators can be found in [here](link-to-repo).
+
+### One of 
+
+Another thing you could do with Facto is randmize the selection from a list of passed elements. For example:
+```go
+//  in factories/event.go
+package factories
+import (
+    "github.com/paganotoni/facto"
+)
+
+func EventFactory(h facto.Helper) facto.Product {
+    event := Event{
+        Name: h.Faker.FirstName(),
+        // You can pass here a list of elements to randomly select from and the 
+        // facto helper will pick one of these.
+        Type: f.OneOf(TypeSports, TypeMusic, TypeConcert).(EventType),
+        ...
+    }
+
+    return facto.Product(event)
+})
+```
 
 ### The CLI
 

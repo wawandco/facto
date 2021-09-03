@@ -1,6 +1,7 @@
 package facto_test
 
 import (
+	"strings"
 	"testing"
 
 	"github.com/paganotoni/facto"
@@ -23,21 +24,43 @@ func TestHelperNamedUUID(t *testing.T) {
 	}
 }
 
-func TestHelperBuild(t *testing.T) {
+func TestHelperOneOf(t *testing.T) {
 	h := &facto.Helper{Index: 1}
 
-	type s struct {
-		Name string
-	}
+	t.Run("Strings", func(t *testing.T) {
+		options := []string{"a", "b", "c"}
+		s, ok := h.OneOf("a", "b", "c").(string)
+		if !ok {
+			t.Errorf("OneOf should return a string")
+		}
 
-	facto.Register("something", func(h facto.Helper) facto.Product {
-		return s{
-			Name: "Hello",
+		if strings.Contains(strings.Join(options, "|"), s) == false {
+			t.Errorf("OneOf should return one of the options")
 		}
 	})
 
-	p := h.Build("something").(s)
-	if p.Name != "Hello" {
-		t.Errorf("Name should be Hello got %v", p.Name)
-	}
+	t.Run("CustomType", func(t *testing.T) {
+		type Status string
+		var (
+			StatusOpen   Status = "open"
+			StatusClosed Status = "closed"
+		)
+
+		s, ok := h.OneOf(StatusOpen, StatusClosed).(Status)
+		if !ok {
+			t.Errorf("OneOf should return a Status")
+		}
+
+		if s != StatusOpen && s != StatusClosed {
+			t.Errorf("OneOf should return one of the Status passed")
+		}
+	})
+
+	t.Run("Empty", func(t *testing.T) {
+		s := h.OneOf()
+		if s != nil {
+			t.Errorf("OneOf should return Nil")
+		}
+	})
+
 }
