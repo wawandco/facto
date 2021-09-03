@@ -6,7 +6,7 @@ import (
 )
 
 // Factory represents the builder of a Product.
-type Factory func(f Helper) Product
+type Factory func(f *Helper) Product
 
 // factoriesRegistry is the container for all
 // factories registred on runtime.
@@ -36,7 +36,7 @@ func Build(factoryName string) Product {
 	defer mu.Unlock()
 
 	if factory, ok := factoriesRegistry[factoryName]; ok {
-		return factory(Helper{Index: 1})
+		return factory(&Helper{Index: 1})
 	}
 
 	return nil
@@ -53,7 +53,7 @@ func BuildN(factoryName string, n int) Product {
 		return nil
 	}
 
-	helper := Helper{Index: 1}
+	helper := &Helper{Index: 1}
 	product := factory(helper)
 
 	products := reflect.MakeSlice(reflect.SliceOf(reflect.ValueOf(product).Type()), 0, n)

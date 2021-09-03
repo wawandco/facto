@@ -1,11 +1,38 @@
-package facto
+package facto_test
 
-import "testing"
+import (
+	"testing"
 
-func TestHelper(t *testing.T) {
-	h := Helper{Index: 1}
+	"github.com/paganotoni/facto"
+)
 
-	if h.Faker.Email() == "" {
-		t.Error("Should return an email")
+func TestHelperNamedUUID(t *testing.T) {
+	h := &facto.Helper{Index: 1}
+
+	u := h.NamedUUID("something")
+	u2 := h.NamedUUID("something")
+
+	if u.String() != u2.String() {
+		t.Errorf("NamedUUIDs should be the same")
+	}
+
+}
+
+func TestHelperBuild(t *testing.T) {
+	h := &facto.Helper{Index: 1}
+
+	type s struct {
+		Name string
+	}
+
+	facto.Register("something", func(h *facto.Helper) facto.Product {
+		return s{
+			Name: "Hello",
+		}
+	})
+
+	p := h.Build("something").(s)
+	if p.Name != "Hello" {
+		t.Errorf("Name should be Hello got %v", p.Name)
 	}
 }
