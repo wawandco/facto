@@ -240,6 +240,29 @@ func EventFactory(h facto.Helper) facto.Product {
 
 The full list of available fake data generators can be found in [here](link-to-repo).
 
+### One of 
+
+Another thing you could do with Facto is randmize the selection from a list of passed elements. For example:
+```go
+//  in factories/event.go
+package factories
+import (
+    "github.com/paganotoni/facto"
+)
+
+func EventFactory(h facto.Helper) facto.Product {
+    event := Event{
+        Name: h.Faker.FirstName(),
+        // You can pass here a list of elements to randomly select from and the 
+        // facto helper will pick one of these.
+        Type: f.OneOf(TypeSports, TypeMusic, TypeConcert).(EventType),
+        ...
+    }
+
+    return facto.Product(event)
+})
+```
+
 ### The CLI
 
 The Facto CLI is a simple command line tool that allows you to generate fixtures files. It contains the following commands to facilitate the use of Facto:

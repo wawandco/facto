@@ -1,6 +1,9 @@
 package facto
 
 import (
+	"math/rand"
+	"time"
+
 	"github.com/gofrs/uuid"
 )
 
@@ -17,7 +20,7 @@ type Helper struct {
 }
 
 // NamedUUID is a helper to create a UUID and keep it in the
-// Facto context for later use.
+// Facto context for later use this could come handy for database relations.
 func (h Helper) NamedUUID(name string) uuid.UUID {
 	name = "uuid_" + name
 	if v := defaultRegistry.getVariable(name); v != nil {
@@ -28,4 +31,23 @@ func (h Helper) NamedUUID(name string) uuid.UUID {
 	defaultRegistry.setVariable(name, uuid)
 
 	return uuid
+}
+
+// One of the passed elements, this method is useful when you
+// have enum values and you want the falue of a field to be
+// one of the possible values.
+// e.g.
+// ...
+// u := User{
+// // here the value of the field is one of the passed elements.
+//	Status: OneOf(UserStatusActive, UserStatusInactive).(UserStatus)
+// }
+func (h Helper) OneOf(values ...interface{}) interface{} {
+	if len(values) == 0 {
+		return nil
+	}
+
+	rand.Seed(time.Now().Unix())
+
+	return values[rand.Intn(len(values))]
 }
