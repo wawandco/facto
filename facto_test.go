@@ -22,6 +22,7 @@ func TestBuild(t *testing.T) {
 		Name         string
 		Address      string
 		ContactEmail string
+		Users        []User
 	}
 
 	facto.Register("User", func(f facto.Helper) facto.Product {
@@ -35,6 +36,19 @@ func TestBuild(t *testing.T) {
 		u := event{
 			Name: "CLICK",
 			User: facto.Build("User").(User),
+		}
+
+		return facto.Product(u)
+	})
+
+	facto.Register("company", func(h facto.Helper) facto.Product {
+		u := company{
+			Name:         h.Faker.Company(),
+			Address:      h.Faker.Address(),
+			ContactEmail: h.Faker.Email(),
+
+			// Building N Users
+			Users: facto.BuildN("User", 5).([]User),
 		}
 
 		return facto.Product(u)
@@ -65,6 +79,34 @@ func TestBuild(t *testing.T) {
 		if event.User.Name != "Wawandco" {
 			t.Errorf("expected '%s' but got '%s'", "Wawandco", event.User.Name)
 		}
+	})
+
+	t.Run("FakeAndBuildN", func(t *testing.T) {
+		c := facto.Build("company").(company)
+		if c.Name == "" {
+			t.Errorf("should have set the Name")
+		}
+
+		if c.Address == "" {
+			t.Errorf("should have set the Address")
+		}
+
+		if c.ContactEmail == "" {
+			t.Errorf("should have set the ContactEmail")
+		}
+
+		if len(c.Users) != 5 {
+			t.Errorf("should have set 5 users, set %v", len(c.Users))
+		}
+
+		for _, u := range c.Users {
+			if u.Name == "" {
+				continue
+			}
+
+			t.Errorf("should have set the Name for User %v", u)
+		}
+
 	})
 
 }
