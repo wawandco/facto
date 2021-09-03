@@ -100,7 +100,7 @@ func TestBuild(t *testing.T) {
 		}
 
 		for _, u := range c.Users {
-			if u.Name == "" {
+			if u.Name != "" {
 				continue
 			}
 
