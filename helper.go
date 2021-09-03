@@ -1,6 +1,10 @@
 package facto
 
-import "github.com/gofrs/uuid"
+import (
+	"sync"
+
+	"github.com/gofrs/uuid"
+)
 
 // Helper gets injected into the factory and provides convenience methods
 // for the fixtures.
@@ -13,9 +17,10 @@ type Helper struct {
 	// on the factory.
 	Faker faker
 
-	// Registry of the variables set in the helper, features like
+	// registry of the variables set in the helper, features like
 	// NamedUUID depend on this registry.
-	Registry map[string]interface{}
+	registry   map[string]interface{}
+	registryMu sync.Mutex
 }
 
 // Build a factory.
@@ -38,13 +43,16 @@ func (h *Helper) NamedUUID(name string) uuid.UUID {
 }
 
 func (h *Helper) setVar(key string, value interface{}) {
-	if h.Registry == nil {
-		h.Registry = make(map[string]interface{})
+	h.registryMu.Lock()
+	defer h.registryMu.Unlock()
+
+	if h.registry == nil {
+		h.registry = make(map[string]interface{})
 	}
 
-	h.Registry[key] = value
+	h.registry[key] = value
 }
 
 func (h *Helper) getVar(key string) interface{} {
-	return h.Registry[key]
+	return h.registry[key]
 }

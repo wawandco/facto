@@ -9,7 +9,7 @@ import (
 type Factory func(f *Helper) Product
 
 // factoriesRegistry is the container for all
-// factories registred on runtime.
+// factories registered on runtime.
 var factoriesRegistry = map[string]Factory{}
 
 // mu will allow sync access to the factoriesRegistry

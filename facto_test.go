@@ -98,7 +98,11 @@ func Test_Build_Concurrently(t *testing.T) {
 		wgbuild.Add(1)
 		go func() {
 			defer wgbuild.Done()
-			userProduct := facto.Build(tcases[i].factoryName).(User)
+			userProduct, ok := facto.Build(tcases[i].factoryName).(User)
+			if !ok {
+				t.Fatalf("Should have got user but got %v", userProduct)
+			}
+
 			if tcases[i].expected != userProduct.Name {
 				t.Errorf("expected '%s' but got '%s' in '%s'", tcases[i].expected, userProduct.Name, fmt.Sprintf("case %d", i+1))
 			}
