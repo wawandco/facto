@@ -86,11 +86,13 @@ func Test_Build_Concurrently(t *testing.T) {
 	var wgreg sync.WaitGroup
 	for i := range tcases {
 		wgreg.Add(1)
-		go func(fname string, factory facto.Factory) {
+		gr := func(fname string, factory facto.Factory) {
 			defer wgreg.Done()
 
 			facto.Register(fname, factory)
-		}(tcases[i].factoryName, tcases[i].factory)
+		}
+
+		go gr(tcases[i].factoryName, tcases[i].factory)
 	}
 	wgreg.Wait()
 
@@ -98,7 +100,7 @@ func Test_Build_Concurrently(t *testing.T) {
 	for i := range tcases {
 		wgbuild.Add(1)
 
-		go func(name, expected string, index int) {
+		gr := func(name, expected string, index int) {
 			defer wgbuild.Done()
 
 			userProduct, ok := facto.Build(name).(User)
@@ -109,7 +111,9 @@ func Test_Build_Concurrently(t *testing.T) {
 			if expected != userProduct.Name {
 				t.Errorf("expected '%s' but got '%s' in '%s'", expected, userProduct.Name, fmt.Sprintf("case %d", i+1))
 			}
-		}(tcases[i].factoryName, tcases[i].expected, i)
+		}
+
+		go gr(tcases[i].factoryName, tcases[i].expected, i)
 	}
 	wgbuild.Wait()
 }
