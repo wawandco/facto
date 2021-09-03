@@ -26,6 +26,50 @@ func Test_Build(t *testing.T) {
 	}
 }
 
+func TestBuildFakeData(t *testing.T) {
+	type OtherUser struct {
+		FirstName string
+		LastName  string
+		Email     string
+		Company   string
+		Address   string
+	}
+
+	facto.Register("User", func(f facto.Helper) facto.Product {
+		u := OtherUser{
+			FirstName: f.Faker.FirstName(),
+			LastName:  f.Faker.LastName(),
+			Email:     f.Faker.Email(),
+			Company:   f.Faker.Company(),
+			Address:   f.Faker.Address(),
+		}
+
+		return facto.Product(u)
+	})
+
+	user := facto.Build("User").(OtherUser)
+
+	if user.FirstName == "" {
+		t.Errorf("should have set the FirstName")
+	}
+
+	if user.LastName == "" {
+		t.Errorf("should have set the LastName")
+	}
+
+	if user.Email == "" {
+		t.Errorf("should have set the Email")
+	}
+
+	if user.Company == "" {
+		t.Errorf("should have set the Company")
+	}
+
+	if user.Address == "" {
+		t.Errorf("should have set the Address")
+	}
+}
+
 func Test_BuildN(t *testing.T) {
 	facto.Register("Users", func(f facto.Helper) facto.Product {
 		u := User{
