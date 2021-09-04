@@ -4,19 +4,8 @@ Facto is a fixtures library with a definition syntax. It aims to allow Go develo
 
 ### Getting started
 
-To get started install the Facto CLI, it will allow you to perform basic operations on your fixtures.
+To get started create `factories/factories.go` which looks like this:
 
-```sh
-go install github.com/paganotoni/facto/cmd/facto@latest
-```
-
-Once initialized you can generate your first factory with:
-
-```sh
-facto generate user
-```
-
-This generates `factories/factories.go` which looks like this:
 ```go
 //  in factories/user.go
 package factories
@@ -53,7 +42,7 @@ func UserFactory(f facto.Helper) facto.Product {
 }
 ```
 
-It's important that before your tests you call factories.Load() to load your factories before the test. Some testing libraries provide a way to do this on a single place.
+It's important that before your tests you call factories.Load() to load your factories before the test. Some testing libraries provide a way to do this on a single place. As an alternative you can use the [CLI to generate](#the-cli) these files.
 
 ### Your first Factory
 
@@ -76,7 +65,7 @@ func UserFactory(h facto.Helper) facto.Product {
 }
 ```
 
-Then on your test file you can use the factory by calling:
+One these are added we can use our factories in our tests, e.g:
 
 ```go
 //  in test/user_test.go
