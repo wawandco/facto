@@ -254,7 +254,13 @@ func EventFactory(h facto.Helper) facto.Product {
 
 ### The CLI
 
-The Facto CLI is a simple command line tool that allows you to generate fixtures files. It contains the following commands to facilitate the use of Facto:
+The Facto CLI is a simple command line tool that allows you to generate fixtures files. To install it you can use the following command:
+
+```
+go get github.com/wawandco/facto/cmd/facto@latest
+```
+
+It contains the following commands to facilitate the use of Facto:
 
  * `facto generate`: Generates fixtures for your project.
  * `facto list`: Shows the list of factories in the current codebase.
