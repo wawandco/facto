@@ -260,20 +260,17 @@ The Facto CLI is a simple command line tool that allows you to generate fixtures
 go get github.com/wawandco/facto/cmd/facto@latest
 ```
 
-It contains the following commands to facilitate the use of Facto:
+The CLI allows you to generate factory files based on a given name. For example:
 
- * `facto generate`: Generates fixtures for your project.
- * `facto list`: Shows the list of factories in the current codebase.
- * `facto version`: The version of the Facto CLI.
-
+```sh
+facto generate user
+# Generates factories/factories.go if it doesn't exist
+# Generates factories/user.go
+```
 
 -------------
-### Good to go
-
-- Registry API ✅: Good for the first pass.
-- Sequences ✅: Index field.
-- Create API ✅: Create a new object in the database.
-### Other topics
-- Custom creators: Allow to use your custom library to persist objects in the DB.
+### Pending
+- Create API: Create a new object in the database.
+- Custom creators: Allow to customize creation.
 - Review terminology from Factory bot.
 - Explain the "Magic" constraints and some principles.
