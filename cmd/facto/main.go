@@ -10,7 +10,7 @@ import (
 func main() {
 	wd, err := os.Getwd()
 	if err != nil {
-		logErr(err)
+		handleErr(err)
 	}
 
 	args := os.Args
@@ -23,7 +23,7 @@ func main() {
 	if args[0] == "generate" {
 		err = facto.Generate(wd, args)
 		if err != nil {
-			logErr(err)
+			handleErr(err)
 		}
 
 		return
@@ -38,7 +38,7 @@ func info() {
 	fmt.Println("Valid commands are `generate` and `info`.")
 }
 
-func logErr(err error) {
+func handleErr(err error) {
 	fmt.Printf("Error running command:\n %v\n\n", err)
 	info()
 	os.Exit(1)
