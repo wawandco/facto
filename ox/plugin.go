@@ -3,10 +3,14 @@ package ox
 import (
 	"context"
 
-	"github.com/spf13/pflag"
+	"github.com/wawandco/facto"
 )
 
-// Plugin for Ox, its mainly a generator but it could be used in here.
+// Plugin for Ox, its mainly an adapter to Ox generators
+// that can be invoked from the Ox command line, it reuses
+// the facto.Generate function which the facto CLI uses as well.
+// this plugin should not have any facto logic as that pertains
+// to Facto, and not to the plugin.
 type Plugin struct{}
 
 // Name of the plugin
@@ -26,15 +30,6 @@ func (p Plugin) InvocationName() string {
 // And
 // - Add facto.Register("Name", NameFactory) to the load method in factories/factories.go
 func (p Plugin) Generate(ctx context.Context, root string, args []string) error {
-	return nil
-}
-
-// ParseFlags parses the flags used by the plugin
-func (p Plugin) ParseFlags([]string) {
-
-}
-
-// Flags that the plugin uses
-func (p Plugin) Flags() *pflag.FlagSet {
-	return nil
+	// Pass arguments to the generate function
+	return facto.Generate(root, args)
 }
