@@ -4,7 +4,7 @@ import (
 	"fmt"
 	"os"
 
-	"github.com/paganotoni/facto"
+	"github.com/wawandco/facto"
 )
 
 func main() {

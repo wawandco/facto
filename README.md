@@ -11,7 +11,7 @@ To get started create `factories/factories.go` which looks like this:
 package factories
 
 import (
-    "github.com/paganotoni/facto"
+    "github.com/wawandco/facto"
 )
 
 // Load all of the factories into facto to make them available for tests.
@@ -32,7 +32,7 @@ As well as `factories/user.go`:
 package factories
 
 import (
-    "github.com/paganotoni/facto"
+    "github.com/wawandco/facto"
 )
 
 func UserFactory(f facto.Helper) facto.Product {
@@ -53,7 +53,7 @@ Facto exposes a small API to register and use factories. The following example s
 package factories
 
 import (
-    "github.com/paganotoni/facto"
+    "github.com/wawandco/facto"
 )
 
 func UserFactory(h facto.Helper) facto.Product {
@@ -119,7 +119,7 @@ package factories
 
 import (
     "fmt"
-    "github.com/paganotoni/facto"
+    "github.com/wawandco/facto"
 )
 
 func UserFactory(h facto.Helper) facto.Product {
@@ -141,7 +141,7 @@ Another case is when you need to build an object that depends on another object.
 //  in factories/event.go
 package factories
 import (
-    "github.com/paganotoni/facto"
+    "github.com/wawandco/facto"
 )
 
 func UserFactory(h facto.Helper) facto.Product {
@@ -171,7 +171,7 @@ Another case here is when you need to reference the ID of the previous object. Y
 //  in factories/user.go
 package factories
 import (
-    "github.com/paganotoni/facto"
+    "github.com/wawandco/facto"
 )
 
 func UserFactory(h facto.Helper) facto.Product {
@@ -188,7 +188,7 @@ func UserFactory(h facto.Helper) facto.Product {
 //  in factories/event.go
 package factories
 import (
-    "github.com/paganotoni/facto"
+    "github.com/wawandco/facto"
 )
 
 func EventFactory(h facto.Helper) facto.Product {
@@ -211,7 +211,7 @@ Sometimes you need to generate data that is not real but at least looks similar 
 //  in factories/event.go
 package factories
 import (
-    "github.com/paganotoni/facto"
+    "github.com/wawandco/facto"
 )
 
 func EventFactory(h facto.Helper) facto.Product {
@@ -236,7 +236,7 @@ Another thing you could do with Facto is randmize the selection from a list of p
 //  in factories/event.go
 package factories
 import (
-    "github.com/paganotoni/facto"
+    "github.com/wawandco/facto"
 )
 
 func EventFactory(h facto.Helper) facto.Product {

@@ -4,7 +4,7 @@ import (
 	"strings"
 	"testing"
 
-	"github.com/paganotoni/facto"
+	"github.com/wawandco/facto"
 )
 
 func TestHelperNamedUUID(t *testing.T) {

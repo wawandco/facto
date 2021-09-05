@@ -6,7 +6,7 @@ import (
 	"testing"
 
 	"github.com/gofrs/uuid"
-	"github.com/paganotoni/facto"
+	"github.com/wawandco/facto"
 )
 
 type user struct {

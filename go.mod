@@ -1,4 +1,4 @@
-module github.com/paganotoni/facto
+module github.com/wawandco/facto
 
 go 1.16
 
