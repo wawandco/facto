@@ -4,25 +4,14 @@ Facto is a fixtures library with a definition syntax. It aims to allow Go develo
 
 ### Getting started
 
-To get started install the Facto CLI, it will allow you to perform basic operations on your fixtures.
+To get started create `factories/factories.go` which looks like this:
 
-```sh
-go install github.com/paganotoni/facto/cmd/facto@latest
-```
-
-Once initialized you can generate your first factory with:
-
-```sh
-facto generate user
-```
-
-This generates `factories/factories.go` which looks like this:
 ```go
 //  in factories/user.go
 package factories
 
 import (
-    "github.com/paganotoni/facto"
+    "github.com/wawandco/facto"
 )
 
 // Load all of the factories into facto to make them available for tests.
@@ -43,7 +32,7 @@ As well as `factories/user.go`:
 package factories
 
 import (
-    "github.com/paganotoni/facto"
+    "github.com/wawandco/facto"
 )
 
 func UserFactory(f facto.Helper) facto.Product {
@@ -53,7 +42,7 @@ func UserFactory(f facto.Helper) facto.Product {
 }
 ```
 
-It's important that before your tests you call factories.Load() to load your factories before the test. Some testing libraries provide a way to do this on a single place.
+It's important that before your tests you call factories.Load() to load your factories before the test. Some testing libraries provide a way to do this on a single place. As an alternative you can use the [CLI to generate](#the-cli) these files.
 
 ### Your first Factory
 
@@ -64,7 +53,7 @@ Facto exposes a small API to register and use factories. The following example s
 package factories
 
 import (
-    "github.com/paganotoni/facto"
+    "github.com/wawandco/facto"
 )
 
 func UserFactory(h facto.Helper) facto.Product {
@@ -76,7 +65,7 @@ func UserFactory(h facto.Helper) facto.Product {
 }
 ```
 
-Then on your test file you can use the factory by calling:
+One these are added we can use our factories in our tests, e.g:
 
 ```go
 //  in test/user_test.go
@@ -130,7 +119,7 @@ package factories
 
 import (
     "fmt"
-    "github.com/paganotoni/facto"
+    "github.com/wawandco/facto"
 )
 
 func UserFactory(h facto.Helper) facto.Product {
@@ -152,7 +141,7 @@ Another case is when you need to build an object that depends on another object.
 //  in factories/event.go
 package factories
 import (
-    "github.com/paganotoni/facto"
+    "github.com/wawandco/facto"
 )
 
 func UserFactory(h facto.Helper) facto.Product {
@@ -182,7 +171,7 @@ Another case here is when you need to reference the ID of the previous object. Y
 //  in factories/user.go
 package factories
 import (
-    "github.com/paganotoni/facto"
+    "github.com/wawandco/facto"
 )
 
 func UserFactory(h facto.Helper) facto.Product {
@@ -199,7 +188,7 @@ func UserFactory(h facto.Helper) facto.Product {
 //  in factories/event.go
 package factories
 import (
-    "github.com/paganotoni/facto"
+    "github.com/wawandco/facto"
 )
 
 func EventFactory(h facto.Helper) facto.Product {
@@ -222,7 +211,7 @@ Sometimes you need to generate data that is not real but at least looks similar 
 //  in factories/event.go
 package factories
 import (
-    "github.com/paganotoni/facto"
+    "github.com/wawandco/facto"
 )
 
 func EventFactory(h facto.Helper) facto.Product {
@@ -247,7 +236,7 @@ Another thing you could do with Facto is randmize the selection from a list of p
 //  in factories/event.go
 package factories
 import (
-    "github.com/paganotoni/facto"
+    "github.com/wawandco/facto"
 )
 
 func EventFactory(h facto.Helper) facto.Product {
@@ -265,20 +254,23 @@ func EventFactory(h facto.Helper) facto.Product {
 
 ### The CLI
 
-The Facto CLI is a simple command line tool that allows you to generate fixtures files. It contains the following commands to facilitate the use of Facto:
+The Facto CLI is a simple command line tool that allows you to generate fixtures files. To install it you can use the following command:
 
- * `facto generate`: Generates fixtures for your project.
- * `facto list`: Shows the list of factories in the current codebase.
- * `facto version`: The version of the Facto CLI.
+```
+go get github.com/wawandco/facto/cmd/facto@latest
+```
 
+The CLI allows you to generate factory files based on a given name. For example:
+
+```sh
+facto generate user
+# Generates factories/factories.go if it doesn't exist
+# Generates factories/user.go
+```
 
 -------------
-### Good to go
-
-- Registry API ✅: Good for the first pass.
-- Sequences ✅: Index field.
-- Create API ✅: Create a new object in the database.
-### Other topics
-- Custom creators: Allow to use your custom library to persist objects in the DB.
+### Pending
+- Create API: Create a new object in the database.
+- Custom creators: Allow to customize creation.
 - Review terminology from Factory bot.
 - Explain the "Magic" constraints and some principles.
