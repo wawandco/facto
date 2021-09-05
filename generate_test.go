@@ -63,7 +63,7 @@ func TestSnakeCase(t *testing.T) {
 }
 
 func TestGenerate(t *testing.T) {
-	dir := t.TempDir()
+	dir := os.TempDir()
 	os.Chdir(dir)
 
 	err := Generate(dir, []string{"generate", "user"})
