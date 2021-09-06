@@ -221,7 +221,7 @@ facto generate user
 # Generates factories/user.go
 ```
 ### Facto & Ox
-Facto provides a plugin for the Ox CLI. To use it add the following to your cmd/ox.go file:
+Facto provides a plugin for the Ox CLI plugin system. To use it add the following to your `cmd/ox/main.go` file:
 
 ```go
 import (
