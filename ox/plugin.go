@@ -1,3 +1,5 @@
+// package ox provides a plugin that can be used to generate factories
+// with the OX cli generate command.
 package ox
 
 import (
