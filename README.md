@@ -239,8 +239,10 @@ func main() {
 		log.Fatal(err)
 	}
 }
+```
 
 Once added you can use facto with Ox within the `generate` command, you can see that invoking the `generate` command will list `factory` as a generator.
+
 ```sh
 $ ox generate
 [info] Using cmd/ox/main.go 
