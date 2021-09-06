@@ -1,48 +1,6 @@
 # Facto
 
-Facto is a fixtures library with a definition syntax. It aims to allow Go developers to define fixtures in a declarative way and using the Go language as the means to describe the fixtures instead of TOML/JSON/YAML. It is inspired on factory_bot.
-
-### Getting started
-
-To get started create `factories/factories.go` which looks like this:
-
-```go
-//  in factories/user.go
-package factories
-
-import (
-    "github.com/wawandco/facto"
-)
-
-// Load all of the factories into facto to make them available for tests.
-// Inside this function we will add the rest of the factories, 
-// Facto will add newly generated factories to this function. Then 
-// Its expected that in your tests you invoke this function, p.e: factories.Load()
-func Load() {
-    // User is how the factory will be invoked, p.e. facto.Build("User)
-    facto.Register("User", UserFactory)
-}
-
-```
-
-As well as `factories/user.go`:
-
-```go
-//  in factories/user.go
-package factories
-
-import (
-    "github.com/wawandco/facto"
-)
-
-func UserFactory(f facto.Helper) facto.Product {
-    // defaults to nil, once generated you will need to add the 
-    // fixture logic in here.
-    return nil
-}
-```
-
-It's important that before your tests you call factories.Load() to load your factories before the test. Some testing libraries provide a way to do this on a single place. As an alternative you can use the [CLI to generate](#the-cli) these files.
+Facto is a fixtures library with a definition syntax. It aims to allow Go developers to define fixtures in a declarative way and using the Go language as the means to describe the fixtures instead of TOML/JSON/YAML. It is inspired by [factory_bot](https://github.com/thoughtbot/factory_bot).
 
 ### Your first Factory
 
@@ -68,7 +26,7 @@ func UserFactory(h facto.Helper) facto.Product {
 One these are added we can use our factories in our tests, e.g:
 
 ```go
-//  in test/user_test.go
+//  in users/user_test.go
 package user_test
 
 import (
@@ -79,7 +37,7 @@ func TestUser(t *testing.T) {
     // Load the factories
     factories.Load()
 
-    user := facto.Build("User").(models.User)
+    user := facto.Build(factories.UserFactory).(models.User)
     err := db.Create(&user)
     // use user for test purposes ...
 
@@ -100,11 +58,11 @@ Sometimes you need to build more than one instance of an object, in that case. F
 package user_test
 
 func TestUser(t *testing.T) {
-    users := facto.BuildN("User", 10).([]models.User)
+    users := facto.BuildN(factories.User, 10).([]models.User)
     // use users for test purposes ...
     
     // you can also create N Users
-    p, err := facto.CreateN("User", 10)
+    p, err := facto.CreateN(factories.User, 10)
     // make sure you check the error
     users := p.([]models.User)
 }
@@ -155,9 +113,8 @@ func UserFactory(h facto.Helper) facto.Product {
 func EventFactory(h facto.Helper) facto.Product {
     event := Event{
         // Here we pull the User from the helper given we know there is a 
-        // factory for it, assuming it was registered in the factories.Load() as `User` we
-        // can use it like this:
-        User: facto.Build("User").(User),
+        // factory for it. can use it like this:
+        User: facto.Build(UserFactory).(User),
         Type: "Something",
     }
 
@@ -242,8 +199,8 @@ import (
 func EventFactory(h facto.Helper) facto.Product {
     event := Event{
         Name: h.Faker.FirstName(),
-        // You can pass here a list of elements to randomly select from and the 
-        // facto helper will pick one of these.
+        // You can pass here a list of elements to randomly select         
+        // from and the facto helper will pick one of these.
         Type: f.OneOf(TypeSports, TypeMusic, TypeConcert).(EventType),
         ...
     }
