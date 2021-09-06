@@ -212,7 +212,7 @@ func OtherUserFactory(f facto.Helper) facto.Product {
 		LastName:  f.Faker.LastName(),
 		Email:     f.Faker.Email(),
 		Company:   f.Faker.Company(),
-		Address:   f.Faker.Address(),
+		Address:   f.Faker.Address().Address,
 	}
 
 	return facto.Product(u)
@@ -230,8 +230,8 @@ func EventFactory(f facto.Helper) facto.Product {
 func CompanyFactory(h facto.Helper) facto.Product {
 	u := company{
 		ID:           h.NamedUUID("company_id"),
-		Name:         h.Faker.Company(),
-		Address:      h.Faker.Address(),
+		Name:         h.Faker.Name(),
+		Address:      h.Faker.Address().Address,
 		ContactEmail: h.Faker.Email(),
 
 		// Building N Users

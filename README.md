@@ -16,7 +16,7 @@ import (
 
 func UserFactory(h facto.Helper) facto.Product {
     user := User{
-        Name: h.Fake.Name(),
+        Name: h.Faker.Name(),
     }
 
     return facto.Product(user)
@@ -101,7 +101,7 @@ import (
 
 func UserFactory(h facto.Helper) facto.Product {
     user := User{
-        Name: h.Fake.FirstName(),
+        Name: h.Faker.FirstName(),
     }
 
     return facto.Product(user)
@@ -172,7 +172,7 @@ func EventFactory(h facto.Helper) facto.Product {
     event := Event{
         Name: h.Faker.FirstName(),
         Type: "Sports",
-        ContactEmail: h.Faker.Email(),
+        ContactEmail: h.Email(),
         Company: h.Faker.Company(),
         Address: h.Faker.Address(),
     }
@@ -181,11 +181,11 @@ func EventFactory(h facto.Helper) facto.Product {
 })
 ```
 
-The full list of available fake data generators can be found in [here](link-to-repo).
+The fake data generation comes by courtesy of [`Gofakeit`](https://github.com/brianvoe/gofakeit) The full list of available fake data generators can be found in [here](https://github.com/brianvoe/gofakeit/tree/v6.7.1#functions).
 
 ### One of
 
-Another thing you could do with Facto is randmize the selection from a list of passed elements. For example:
+Another thing you could do with Facto is randomize the selection from a list of passed elements. For example:
 ```go
 //  in factories/event.go
 package factories
@@ -270,6 +270,5 @@ $ ox generate factory [name]
 -------------
 ### Pending
 - Create API: Create a new object in the database.
-- Custom creators: Allow to customize creation.
 - Review terminology from Factory bot.
 - Explain the "Magic" constraints and some principles.

@@ -4,19 +4,19 @@ import (
 	"math/rand"
 	"time"
 
+	"github.com/brianvoe/gofakeit/v6"
 	"github.com/gofrs/uuid"
 )
 
 // Helper gets injected into the factory and provides convenience methods
 // for the fixtures.
 type Helper struct {
+	// Faker instance to provide the ability to create fake data to the helper.
+	Faker *gofakeit.Faker
+
 	// Index is useful when creating N elements, this
 	// Allow to differentiate the elements by the index.
 	Index int
-
-	// Faker instance to provide the ability to create fake data
-	// on the factory.
-	Faker faker
 }
 
 // NamedUUID is a helper to create a UUID and keep it in the
@@ -50,4 +50,10 @@ func (h Helper) OneOf(values ...interface{}) interface{} {
 	rand.Seed(time.Now().Unix())
 
 	return values[rand.Intn(len(values))]
+}
+
+func NewHelper() Helper {
+	return Helper{
+		Faker: gofakeit.New(0),
+	}
 }

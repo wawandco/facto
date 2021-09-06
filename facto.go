@@ -10,13 +10,13 @@ type Factory func(f Helper) Product
 // Build requests the factory identified by factoryName
 // to build a product.
 func Build(f Factory) Product {
-	return f(Helper{Index: 0})
+	return f(NewHelper())
 }
 
 // BuildN requests the factory identified by factoryName
 // to build n elements of a product.
 func BuildN(f Factory, n int) Product {
-	h := Helper{Index: 0}
+	h := NewHelper()
 	product := f(h)
 
 	products := reflect.MakeSlice(reflect.SliceOf(reflect.ValueOf(product).Type()), 0, n)
