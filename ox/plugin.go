@@ -2,8 +2,15 @@ package ox
 
 import (
 	"context"
+	"errors"
 
 	"github.com/wawandco/facto"
+)
+
+var (
+	// ErrIncompleteArgs is returned when the arguments are not enough to generate
+	// the factory.
+	ErrIncompleteArgs = errors.New("incomplete arguments")
 )
 
 // Plugin for Ox, its mainly an adapter to Ox generators
@@ -24,12 +31,15 @@ func (p Plugin) InvocationName() string {
 	return "factory"
 }
 
-// Generate:
-// - the factory file within app/factories.
-// - factories/factories.go with the Load() method if it does not exist.
-// And
-// - Add facto.Register("Name", NameFactory) to the load method in factories/factories.go
+// Generate the factory file within factories, e.g. factories/user.go
 func (p Plugin) Generate(ctx context.Context, root string, args []string) error {
 	// Pass arguments to the generate function
+	if len(args) < 3 {
+		return ErrIncompleteArgs
+	}
+
+	// pass "generate" and the rest of the parameters as the Generate function
+	// expects that format.
+	args = append([]string{"generate"}, args[2:]...)
 	return facto.Generate(root, args)
 }
