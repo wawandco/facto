@@ -34,9 +34,6 @@ import (
 )
 
 func TestUser(t *testing.T) {
-    // Load the factories
-    factories.Load()
-
     user := facto.Build(factories.UserFactory).(models.User)
     err := db.Create(&user)
     // use user for test purposes ...
@@ -50,7 +47,7 @@ func TestUser(t *testing.T) {
 }
 ```
 
-### Building/Creating N   
+### Building/Creating N
 Sometimes you need to build more than one instance of an object, in that case. Facto provides 2 functions to do that: `BuildN` and `CreateN`.
 
 ```go
@@ -60,7 +57,7 @@ package user_test
 func TestUser(t *testing.T) {
     users := facto.BuildN(factories.User, 10).([]models.User)
     // use users for test purposes ...
-    
+
     // you can also create N Users
     p, err := facto.CreateN(factories.User, 10)
     // make sure you check the error
@@ -133,12 +130,12 @@ import (
 
 func UserFactory(h facto.Helper) facto.Product {
     user := User{
-        // owner_id will be assigned the generated UUID 
-        // and any 
+        // owner_id will be assigned the generated UUID
+        // and any
         ID: h.NamedUUID("owner_id"),
         Name: h.Faker.FirstName(),
     }
-    
+
     return facto.Product(user)
 }
 
@@ -186,7 +183,7 @@ func EventFactory(h facto.Helper) facto.Product {
 
 The full list of available fake data generators can be found in [here](link-to-repo).
 
-### One of 
+### One of
 
 Another thing you could do with Facto is randmize the selection from a list of passed elements. For example:
 ```go
@@ -199,7 +196,7 @@ import (
 func EventFactory(h facto.Helper) facto.Product {
     event := Event{
         Name: h.Faker.FirstName(),
-        // You can pass here a list of elements to randomly select         
+        // You can pass here a list of elements to randomly select
         // from and the facto helper will pick one of these.
         Type: f.OneOf(TypeSports, TypeMusic, TypeConcert).(EventType),
         ...
