@@ -220,6 +220,50 @@ The CLI allows you to generate factory files based on a given name. For example:
 facto generate user
 # Generates factories/user.go
 ```
+### Facto & Ox
+Facto provides a plugin for the Ox CLI. To use it add the following to your cmd/ox.go file:
+
+```go
+import (
+    ...
+    fox "github.com/wawandco/facto/cmd/ox" // Add the facto ox package, we called it fox here 😉
+)
+
+func main() {
+    // You may have other plugins here.
+    //...
+    cli.Use(fox.Plugin{}) // Add the facto Ox plugin.
+
+    err := cli.Run(context.Background(), os.Args)
+	if err != nil {
+		log.Fatal(err)
+	}
+}
+
+Once added you can use facto with Ox within the `generate` command, you can see that invoking the `generate` command will list `factory` as a generator.
+```sh
+$ ox generate
+[info] Using cmd/ox/main.go 
+
+Available Generators:
+
+  Name          Plugin
+  ----          ------
+  ox            ox/generate-cli-main
+  template      buffalo/generate-template
+  model         buffalo/generate-model
+  action        buffalo/generate-action
+  resource      buffalo/generate-resource
+  task          grift/generate-task
+  migration     liquo/generate-migration
+  factory       facto ## (this is the one you are looking at)
+```
+
+Which you can then use to generate your factories with:
+
+```
+$ ox generate factory user
+```
 
 -------------
 ### Pending
