@@ -264,7 +264,6 @@ The CLI allows you to generate factory files based on a given name. For example:
 
 ```sh
 facto generate user
-# Generates factories/factories.go if it doesn't exist
 # Generates factories/user.go
 ```
 
