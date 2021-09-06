@@ -258,13 +258,13 @@ Available Generators:
   resource      buffalo/generate-resource
   task          grift/generate-task
   migration     liquo/generate-migration
-  factory       facto ## (this is the one you are looking at)
+  factory       facto ## (this is the one you are looking for)
 ```
 
 Which you can then use to generate your factories with:
 
 ```
-$ ox generate factory user
+$ ox generate factory [name]
 ```
 
 -------------
