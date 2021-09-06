@@ -9,7 +9,6 @@ var (
 // Registry holds factories and variables in memory for
 // its use by other components.
 type registry struct {
-	factories map[string]Factory
 	variables map[string]interface{}
 
 	mu sync.RWMutex
