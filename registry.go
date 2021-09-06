@@ -6,7 +6,7 @@ var (
 	defaultRegistry = &registry{}
 )
 
-// Registry holds factories and variables in memory for
+// Registry holds variables in memory for
 // its use by other components.
 type registry struct {
 	variables map[string]interface{}
