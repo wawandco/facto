@@ -87,7 +87,11 @@ func TestGenerate(t *testing.T) {
 }
 
 func TestGenerateDirExists(t *testing.T) {
-	d := os.TempDir()
+	d, err := ioutil.TempDir("", "test")
+	if err != nil {
+		t.Fatalf("Could not create temp dir: %v", err)
+	}
+
 	os.Chdir(d)
 
 	deleteAll := func() {
