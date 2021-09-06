@@ -7,5 +7,8 @@ import (
 
 // {{.Name}}Factory is a factory for {{.Name}} 😬.
 func {{ .Name }}Factory(h facto.Helper) facto.Product {
+    // In here you should build  your {{.Name}} and return it
+    // casting with `facto.Product` e.g. 
+    //   return facto.Product({{.Name}}{}).
     return facto.Product(nil)
 }
