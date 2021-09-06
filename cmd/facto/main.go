@@ -8,28 +8,30 @@ import (
 )
 
 func main() {
+	run(os.Args)
+}
+
+func run(args []string) {
 	wd, err := os.Getwd()
 	if err != nil {
 		handleErr(err)
 	}
 
-	args := os.Args
 	if len(args) < 2 {
 		info()
 		return
 	}
 
 	args = args[1:]
-	if args[0] == "generate" {
-		err = facto.Generate(wd, args)
-		if err != nil {
-			handleErr(err)
-		}
-
+	if args[0] != "generate" {
+		info()
 		return
 	}
 
-	info()
+	err = facto.Generate(wd, args)
+	if err != nil {
+		handleErr(err)
+	}
 }
 
 // A simple info command to guide users.
