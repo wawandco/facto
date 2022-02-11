@@ -24,7 +24,7 @@ func TestCammelCase(t *testing.T) {
 		t.Run(v.in, func(t *testing.T) {
 			out := camelCase(v.in)
 			if out != v.want {
-				t.Errorf("camelCase(%q) = %q, want %q", v.in, out, v.want)
+				t.Fatalf("camelCase(%q) = %q, want %q", v.in, out, v.want)
 			}
 		})
 	}
@@ -58,7 +58,7 @@ func TestSnakeCase(t *testing.T) {
 		result := snakeCase(v.input)
 
 		if result != v.expected {
-			t.Errorf("snakeCase(%q) = %q, want %q", v.input, result, v.expected)
+			t.Fatalf("snakeCase(%q) = %q, want %q", v.input, result, v.expected)
 		}
 	}
 }
@@ -78,11 +78,11 @@ func TestGenerate(t *testing.T) {
 	}
 
 	if !strings.Contains(string(data), `package factories`) {
-		t.Errorf("factory file should contain package name, got: \n%s", data)
+		t.Fatalf("factory file should contain package name, got: \n%s", data)
 	}
 
 	if !strings.Contains(string(data), `func UserFactory(h facto.Helper)`) {
-		t.Errorf("factory file should contain func definition, got: \n%s", data)
+		t.Fatalf("factory file should contain func definition, got: \n%s", data)
 	}
 }
 
@@ -115,11 +115,11 @@ func TestGenerateDirExists(t *testing.T) {
 		}
 
 		if !strings.Contains(string(data), `package factories`) {
-			t.Errorf("factory file should contain package name, got: \n%s", data)
+			t.Fatalf("factory file should contain package name, got: \n%s", data)
 		}
 
 		if !strings.Contains(string(data), `func UserFactory(h facto.Helper)`) {
-			t.Errorf("factory file should contain func definition, got: \n%s", data)
+			t.Fatalf("factory file should contain func definition, got: \n%s", data)
 		}
 	})
 
@@ -142,7 +142,7 @@ func TestGenerateDirExists(t *testing.T) {
 		}
 
 		if !strings.Contains(string(data), `func UserFactory(h facto.Helper)`) {
-			t.Errorf("factory file should contain func definition, got: \n%s", data)
+			t.Fatalf("factory file should contain func definition, got: \n%s", data)
 		}
 	})
 
@@ -170,7 +170,7 @@ func TestGenerateDirExists(t *testing.T) {
 		}
 
 		if !strings.Contains(string(data), `func UserFactory(h facto.Helper)`) {
-			t.Errorf("factory file should contain func definition, got: \n%s", data)
+			t.Fatalf("factory file should contain func definition, got: \n%s", data)
 		}
 	})
 

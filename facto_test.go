@@ -5,7 +5,6 @@ import (
 	"sync"
 	"testing"
 
-	"github.com/gofrs/uuid"
 	"github.com/wawandco/facto"
 )
 
@@ -13,37 +12,37 @@ func TestBuild(t *testing.T) {
 	t.Run("Simple", func(t *testing.T) {
 		userProduct := facto.Build(UserFactory).(user)
 		if userProduct.Name != "Wawandco" {
-			t.Errorf("expected '%s' but got '%s'", "Wawandco", userProduct.Name)
+			t.Fatalf("expected '%s' but got '%s'", "Wawandco", userProduct.Name)
 		}
 	})
 
 	t.Run("Dependent", func(t *testing.T) {
 		event := facto.Build(EventFactory).(event)
 		if event.Name != "CLICK" {
-			t.Errorf("expected '%s' but got '%s'", "CLICK", event.Name)
+			t.Fatalf("expected '%s' but got '%s'", "CLICK", event.Name)
 		}
 
 		if event.User.Name != "Wawandco" {
-			t.Errorf("expected '%s' but got '%s'", "Wawandco", event.User.Name)
+			t.Fatalf("expected '%s' but got '%s'", "Wawandco", event.User.Name)
 		}
 	})
 
 	t.Run("FakeAndBuildN", func(t *testing.T) {
 		c := facto.Build(CompanyFactory).(company)
 		if c.Name == "" {
-			t.Errorf("should have set the Name")
+			t.Fatalf("should have set the Name")
 		}
 
 		if c.Address == "" {
-			t.Errorf("should have set the Address")
+			t.Fatalf("should have set the Address")
 		}
 
 		if c.ContactEmail == "" {
-			t.Errorf("should have set the ContactEmail")
+			t.Fatalf("should have set the ContactEmail")
 		}
 
 		if len(c.Users) != 5 {
-			t.Errorf("should have set 5 users, set %v", len(c.Users))
+			t.Fatalf("should have set 5 users, set %v", len(c.Users))
 		}
 
 		for _, u := range c.Users {
@@ -51,7 +50,7 @@ func TestBuild(t *testing.T) {
 				continue
 			}
 
-			t.Errorf("should have set the Name for User %v", u)
+			t.Fatalf("should have set the Name for User %v", u)
 		}
 
 	})
@@ -59,7 +58,7 @@ func TestBuild(t *testing.T) {
 	t.Run("NamedUUID", func(t *testing.T) {
 		c := facto.Build(DepartmentFactory).(department)
 		if c.CompanyID.String() != c.Company.ID.String() {
-			t.Errorf("companyID should match")
+			t.Fatalf("companyID should match")
 		}
 	})
 
@@ -69,23 +68,23 @@ func TestBuildFakeData(t *testing.T) {
 	user := facto.Build(OtherUserFactory).(OtherUser)
 
 	if user.FirstName == "" {
-		t.Errorf("should have set the FirstName")
+		t.Fatalf("should have set the FirstName")
 	}
 
 	if user.LastName == "" {
-		t.Errorf("should have set the LastName")
+		t.Fatalf("should have set the LastName")
 	}
 
 	if user.Email == "" {
-		t.Errorf("should have set the Email")
+		t.Fatalf("should have set the Email")
 	}
 
 	if user.Company == "" {
-		t.Errorf("should have set the Company")
+		t.Fatalf("should have set the Company")
 	}
 
 	if user.Address == "" {
-		t.Errorf("should have set the Address")
+		t.Fatalf("should have set the Address")
 	}
 }
 
@@ -94,8 +93,102 @@ func Test_BuildN(t *testing.T) {
 
 	for i := 0; i < 5; i++ {
 		if fmt.Sprintf("Wawandco %d", i) != usersProduct[i].Name {
-			t.Errorf("expected '%s' but got '%s'", fmt.Sprintf("Wawandco %d", i), usersProduct[i].Name)
+			t.Fatalf("expected '%s' but got '%s'", fmt.Sprintf("Wawandco %d", i), usersProduct[i].Name)
 		}
+	}
+}
+
+func Test_Create(t *testing.T) {
+	mc := &facto.MemoryCreator{}
+
+	tcases := []struct {
+		name    string
+		creator facto.Creator
+		check   func(*testing.T, facto.Product, error)
+	}{
+		{
+			name:    "no creator",
+			creator: nil,
+			check: func(tt *testing.T, p facto.Product, err error) {
+				if err == nil {
+					tt.Fatalf("expected an error")
+				}
+
+				if err != facto.ErrNoCreatorDefined {
+					tt.Fatalf("expected error to be ErrNoCreator but got %v", err)
+				}
+			},
+		},
+
+		{
+			name:    "creator defined",
+			creator: mc,
+			check: func(tt *testing.T, p facto.Product, err error) {
+				if err != nil {
+					tt.Fatalf("expected no error but got %v", err)
+				}
+
+				if !mc.Contains(p) {
+					tt.Fatalf("expected product to be in memory creator")
+				}
+			},
+		},
+	}
+
+	for _, tcase := range tcases {
+		t.Run(tcase.name, func(tt *testing.T) {
+			facto.SetCreator(tcase.creator)
+
+			p, err := facto.Create(UserFactory)
+			tcase.check(tt, p, err)
+		})
+	}
+}
+
+func Test_CreateN(t *testing.T) {
+	mc := &facto.MemoryCreator{}
+
+	tcases := []struct {
+		name    string
+		creator facto.Creator
+		check   func(*testing.T, facto.Product, error)
+	}{
+		{
+			name:    "no creator",
+			creator: nil,
+			check: func(tt *testing.T, p facto.Product, err error) {
+				if err == nil {
+					tt.Fatalf("expected an error")
+				}
+
+				if err != facto.ErrNoCreatorDefined {
+					tt.Fatalf("expected error to be ErrNoCreator but got %v", err)
+				}
+			},
+		},
+
+		{
+			name:    "creator defined",
+			creator: mc,
+			check: func(tt *testing.T, p facto.Product, err error) {
+				if err != nil {
+					tt.Fatalf("expected no error but got %v", err)
+				}
+
+				if !mc.Contains(p) {
+					tt.Fatalf("expected product to be in memory creator")
+				}
+			},
+		},
+	}
+
+	for _, tcase := range tcases {
+		t.Run(tcase.name, func(tt *testing.T) {
+			facto.SetCreator(tcase.creator)
+
+			p, err := facto.CreateN(UserFactory, 10)
+			tcase.check(tt, p, err)
+		})
 	}
 }
 
@@ -152,101 +245,11 @@ func Test_Build_Concurrently(t *testing.T) {
 			}
 
 			if expected != userProduct.Name {
-				t.Errorf("expected '%s' but got '%s' in '%s'", expected, userProduct.Name, fmt.Sprintf("case %d", i+1))
+				t.Fatalf("expected '%s' but got '%s' in '%s'", expected, userProduct.Name, fmt.Sprintf("case %d", i+1))
 			}
 		}
 
 		go gr(tcases[i].factoryName, tcases[i].factory, tcases[i].expected, i)
 	}
 	wgbuild.Wait()
-}
-
-type user struct {
-	Name string
-}
-
-type event struct {
-	Name string
-	User user
-}
-
-type company struct {
-	ID           uuid.UUID
-	Name         string
-	Address      string
-	ContactEmail string
-	Users        []user
-}
-
-type department struct {
-	Name      string
-	CompanyID uuid.UUID
-	Company   company
-}
-
-type OtherUser struct {
-	FirstName string
-	LastName  string
-	Email     string
-	Company   string
-	Address   string
-}
-
-func UserNFactory(f facto.Helper) facto.Product {
-	u := user{
-		Name: fmt.Sprintf("Wawandco %d", f.Index),
-	}
-	return facto.Product(u)
-}
-
-func UserFactory(f facto.Helper) facto.Product {
-	u := user{
-		Name: "Wawandco",
-	}
-	return facto.Product(u)
-}
-
-func OtherUserFactory(f facto.Helper) facto.Product {
-	u := OtherUser{
-		FirstName: f.Faker.FirstName(),
-		LastName:  f.Faker.LastName(),
-		Email:     f.Faker.Email(),
-		Company:   f.Faker.Company(),
-		Address:   f.Faker.Address().Address,
-	}
-
-	return facto.Product(u)
-}
-
-func EventFactory(f facto.Helper) facto.Product {
-	u := event{
-		Name: "CLICK",
-		User: facto.Build(UserFactory).(user),
-	}
-
-	return facto.Product(u)
-}
-
-func CompanyFactory(h facto.Helper) facto.Product {
-	u := company{
-		ID:           h.NamedUUID("company_id"),
-		Name:         h.Faker.Name(),
-		Address:      h.Faker.Address().Address,
-		ContactEmail: h.Faker.Email(),
-
-		// Building N Users
-		Users: facto.BuildN(UserFactory, 5).([]user),
-	}
-
-	return facto.Product(u)
-}
-
-func DepartmentFactory(f facto.Helper) facto.Product {
-	u := department{
-		Name:      "Technology",
-		CompanyID: f.NamedUUID("company_id"),
-		Company:   facto.Build(CompanyFactory).(company),
-	}
-
-	return facto.Product(u)
 }
