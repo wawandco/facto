@@ -12,7 +12,7 @@ var (
 	ErrNoCreatorDefined = fmt.Errorf("no creator set")
 )
 
-// sets the creator for Facto.
+// SetCreator that CreateN and Create will use when invoked.
 func SetCreator(c Creator) {
 	creator = c
 }
@@ -24,6 +24,10 @@ type Creator interface {
 	Create(interface{}) error
 }
 
+// MemoryCreator is a creator that serves as a way to test
+// the creation of records. Its not intended to be used in
+// production as it is not thread safe. It is also intended
+// to show how to implement a Creator in case don't have one.
 type MemoryCreator struct {
 	created []interface{}
 }
