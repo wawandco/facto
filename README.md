@@ -109,7 +109,7 @@ func UserFactory(h facto.Helper) facto.Product {
 
 func EventFactory(h facto.Helper) facto.Product {
     event := Event{
-        // Here we pull the User from the helper given we know there is a 
+        // Here we pull the User from the helper given we know there is a
         // factory for it. can use it like this:
         User: facto.Build(UserFactory).(User),
         Type: "Something",
@@ -147,7 +147,7 @@ import (
 
 func EventFactory(h facto.Helper) facto.Product {
     event := Event{
-        // Here we pull the User from the helper given we know there is a 
+        // Here we pull the User from the helper given we know there is a
         // factory that adds it. If there was not one it would be generated new.
         UserID: h.NamedUUID("owner_id"),
         Type: "Something",
@@ -226,7 +226,7 @@ Facto provides a plugin for the Ox CLI plugin system. To use it add the followin
 ```go
 import (
     ...
-    fox "github.com/wawandco/facto/cmd/ox" // Add the facto ox package, we called it fox here 😉
+    fox "github.com/wawandco/facto/ox" // Add the facto ox package, we called it fox here 😉
 )
 
 func main() {
@@ -245,7 +245,7 @@ Once added you can use facto with Ox within the `generate` command, you can see 
 
 ```sh
 $ ox generate
-[info] Using cmd/ox/main.go 
+[info] Using cmd/ox/main.go
 
 Available Generators:
 
