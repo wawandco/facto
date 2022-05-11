@@ -1,6 +1,7 @@
 package facto
 
 import (
+	"fmt"
 	"reflect"
 )
 
@@ -29,4 +30,34 @@ func BuildN(f Factory, n int) Product {
 	}
 
 	return Product(products.Interface())
+}
+
+// Create a record using the configured creator. It calls the Build function
+// and then passes the result product to the creator.
+func Create(f Factory) (Product, error) {
+	if creator == nil {
+		return nil, ErrNoCreatorDefined
+	}
+
+	p := Build(f)
+	if err := creator.Create(p); err != nil {
+		return p, fmt.Errorf("could not create products: %w", err)
+	}
+
+	return p, nil
+}
+
+// Create n records of a given factory. It calls BuildN and then
+// passes the result to the creator.
+func CreateN(f Factory, n int) (Product, error) {
+	if creator == nil {
+		return nil, ErrNoCreatorDefined
+	}
+
+	p := BuildN(f, n)
+	if err := creator.Create(p); err != nil {
+		return p, fmt.Errorf("could not create products: %w", err)
+	}
+
+	return p, nil
 }

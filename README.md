@@ -88,6 +88,29 @@ func UserFactory(h facto.Helper) facto.Product {
 
 When the factory gets called individually Index will be 0.
 
+#### Create and CreateN
+
+Besides building your products there are 2 handy methods, Create and CreateN, that will call a established Creator to create desired records in application persistence layer.
+
+Before calling each of these methods you need to register a Creator instance, to do so you use the `facto.SetCreator` function.
+
+```go
+func TestUserCreated(t *testing.T) {
+    // register a creator
+    facto.SetCreator(UserCreator{})
+
+    // create a user
+    user := facto.Create("User").(models.User)
+    // use user for test purposes ...
+
+    // create N users
+    users := facto.CreateN("User", 10).([]models.User)
+    // use users for test purposes ...
+}
+```
+
+When there is no registered creator, the `Create` and `CreateN` methods will return an error.
+
 ### Dependent factories
 
 Another case is when you need to build an object that depends on another object. You can use the `factory.Helper` parameter on your factory to get the object you need:
@@ -205,6 +228,7 @@ func EventFactory(h facto.Helper) facto.Product {
     return facto.Product(event)
 })
 ```
+
 
 ### The CLI
 
