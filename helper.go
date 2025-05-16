@@ -5,7 +5,7 @@ import (
 	"time"
 
 	"github.com/brianvoe/gofakeit/v6"
-	"github.com/gofrs/uuid"
+	"github.com/gofrs/uuid/v5"
 )
 
 // Helper gets injected into the factory and provides convenience methods
@@ -40,8 +40,9 @@ func (h Helper) NamedUUID(name string) uuid.UUID {
 // ...
 // u := User{
 // // here the value of the field is one of the passed elements.
-//	Status: OneOf(UserStatusActive, UserStatusInactive).(UserStatus)
-// }
+//
+//		Status: OneOf(UserStatusActive, UserStatusInactive).(UserStatus)
+//	}
 func (h Helper) OneOf(values ...interface{}) interface{} {
 	if len(values) == 0 {
 		return nil
