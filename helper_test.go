@@ -13,14 +13,19 @@ func TestHelperNamedUUID(t *testing.T) {
 	u := h.NamedUUID("something")
 	u2 := h.NamedUUID("something")
 
-	if u.String() != u2.String() {
+	// Convert to UUID string format for comparison
+	uuidStr := uuidBytesToString(u)
+	uuidStr2 := uuidBytesToString(u2)
+
+	if uuidStr != uuidStr2 {
 		t.Errorf("NamedUUIDs should be the same")
 	}
 
 	u3 := h.NamedUUID("something else")
+	uuidStr3 := uuidBytesToString(u3)
 
-	if u.String() == u3.String() {
-		t.Errorf("Diferent named UUIDS should result in different values")
+	if uuidStr == uuidStr3 {
+		t.Errorf("Different named UUIDs should result in different values")
 	}
 }
 

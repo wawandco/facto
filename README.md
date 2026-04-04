@@ -1,13 +1,19 @@
 # Facto
 
-Facto is a fixtures library with a definition syntax. It aims to allow Go developers to define fixtures in a declarative way and using the Go language as the means to describe the fixtures instead of TOML/JSON/YAML. It is inspired by [factory_bot](https://github.com/thoughtbot/factory_bot).
+Facto is a fixtures library with a definition syntax. It allows Go developers to define fixtures in a declarative way using Go code instead of TOML/JSON/YAML. Inspired by [factory_bot](https://github.com/thoughtbot/factory_bot).
 
-### Your first Factory
+## Installation
 
-Facto exposes a small API to register and use factories. The following example shows how to create a factory named `User`:
+```bash
+go get github.com/wawandco/facto
+```
+
+## Your First Factory
+
+Facto exposes a small API to define and use factories. Here's how to create a `User` factory:
 
 ```go
-//  in factories/user.go
+// factories/user.go
 package factories
 
 import (
@@ -23,10 +29,10 @@ func UserFactory(h facto.Helper) facto.Product {
 }
 ```
 
-One these are added we can use our factories in our tests, e.g:
+Once defined, use factories in your tests:
 
 ```go
-//  in users/user_test.go
+// users/user_test.go
 package user_test
 
 import (
@@ -34,42 +40,42 @@ import (
 )
 
 func TestUser(t *testing.T) {
+    // Build creates an object without persisting it
     user := facto.Build(factories.UserFactory).(models.User)
     err := db.Create(&user)
     // use user for test purposes ...
 
-    // Another alternative is to use create, which will attempt at creating the object directly in your database.
-    // In which case the user variable has already been stored in the database.
-    p, err := facto.Create("User")
+    // Create builds and persists the object to the database
+    p, err := facto.Create(factories.UserFactory)
     user := p.(models.User)
-    // use user for test purposes ...
-
+    // user is already stored in the database
 }
 ```
 
-### Building/Creating N
-Sometimes you need to build more than one instance of an object, in that case. Facto provides 2 functions to do that: `BuildN` and `CreateN`.
+## Building Multiple Objects
+
+When you need multiple instances, use `BuildN` or `CreateN`:
 
 ```go
-//  in test/user_test.go
+// test/user_test.go
 package user_test
 
-func TestUser(t *testing.T) {
-    users := facto.BuildN(factories.User, 10).([]models.User)
-    // use users for test purposes ...
-
-    // you can also create N Users
-    p, err := facto.CreateN(factories.User, 10)
-    // make sure you check the error
-    users := p.([]models.User)
+func TestMultipleUsers(t *testing.T) {
+    // Build 10 users without persisting
+    users := facto.BuildN(factories.UserFactory, 10).([]models.User)
+    
+    // Create 10 users and persist them
+    p, err := facto.CreateN(factories.UserFactory, 10)
+    users = p.([]models.User)
 }
-
 ```
 
-When running `BuildN` you can use the Index variable to get the index of the object being built. This is useful when you need to build a list of objects and you want to know which one is being built.
+### Using the Index
+
+When running `BuildN`, use `h.Index` to differentiate objects:
 
 ```go
-//  in factories/user.go
+// factories/user.go
 package factories
 
 import (
@@ -79,22 +85,23 @@ import (
 
 func UserFactory(h facto.Helper) facto.Product {
     user := User{
-        Name: fmt.Sprintf("User %d", f.Index),
+        Name: fmt.Sprintf("User %d", h.Index),
     }
 
     return facto.Product(user)
 }
 ```
 
-When the factory gets called individually Index will be 0.
+`h.Index` starts at 0 when a factory is called individually.
 
-### Dependent factories
+## Dependent Factories
 
-Another case is when you need to build an object that depends on another object. You can use the `factory.Helper` parameter on your factory to get the object you need:
+Build objects that depend on other objects:
 
 ```go
-//  in factories/event.go
+// factories/event.go
 package factories
+
 import (
     "github.com/wawandco/facto"
 )
@@ -109,166 +116,195 @@ func UserFactory(h facto.Helper) facto.Product {
 
 func EventFactory(h facto.Helper) facto.Product {
     event := Event{
-        // Here we pull the User from the helper given we know there is a
-        // factory for it. can use it like this:
+        // Build a User within the Event factory
         User: facto.Build(UserFactory).(User),
         Type: "Something",
     }
 
     return facto.Product(event)
-})
+}
 ```
 
-Another case here is when you need to reference the ID of the previous object. You can use the `factory.Helper` parameter on your factory to build a Named UUID:
+## Named UUIDs
+
+Reference the same ID across multiple factories using `NamedUUID`:
 
 ```go
-//  in factories/user.go
+// factories/user.go
 package factories
+
 import (
     "github.com/wawandco/facto"
 )
 
 func UserFactory(h facto.Helper) facto.Product {
     user := User{
-        // owner_id will be assigned the generated UUID
-        // and any
-        ID: h.NamedUUID("owner_id"),
+        // Creates or retrieves a UUID named "owner_id"
+        ID:   h.NamedUUID("owner_id"),
         Name: h.Faker.FirstName(),
     }
 
     return facto.Product(user)
 }
 
-//  in factories/event.go
+// factories/event.go
 package factories
+
 import (
     "github.com/wawandco/facto"
 )
 
 func EventFactory(h facto.Helper) facto.Product {
     event := Event{
-        // Here we pull the User from the helper given we know there is a
-        // factory that adds it. If there was not one it would be generated new.
+        // Retrieves the same "owner_id" UUID if UserFactory was called,
+        // otherwise generates a new one
         UserID: h.NamedUUID("owner_id"),
-        Type: "Something",
+        Type:   "Something",
     }
 
     return facto.Product(event)
-})
-```
-
-### Faking data
-
-Sometimes you need to generate data that is not real but at least looks similar to what the real data will be. To solve that need Facto provides the `Fake` method within the facto.Helper, it can be used within the factory it to generate fake data. for example:
-
-```go
-//  in factories/event.go
-package factories
-import (
-    "github.com/wawandco/facto"
-)
-
-func EventFactory(h facto.Helper) facto.Product {
-    event := Event{
-        Name: h.Faker.FirstName(),
-        Type: "Sports",
-        ContactEmail: h.Email(),
-        Company: h.Faker.Company(),
-        Address: h.Faker.Address(),
-    }
-
-    return facto.Product(event)
-})
-```
-
-The fake data generation comes by courtesy of [`Gofakeit`](https://github.com/brianvoe/gofakeit) The full list of available fake data generators can be found in [here](https://github.com/brianvoe/gofakeit/tree/v6.7.1#functions).
-
-### One of
-
-Another thing you could do with Facto is randomize the selection from a list of passed elements. For example:
-```go
-//  in factories/event.go
-package factories
-import (
-    "github.com/wawandco/facto"
-)
-
-func EventFactory(h facto.Helper) facto.Product {
-    event := Event{
-        Name: h.Faker.FirstName(),
-        // You can pass here a list of elements to randomly select
-        // from and the facto helper will pick one of these.
-        Type: f.OneOf(TypeSports, TypeMusic, TypeConcert).(EventType),
-        ...
-    }
-
-    return facto.Product(event)
-})
-```
-
-### The CLI
-
-The Facto CLI is a simple command line tool that allows you to generate fixtures files. To install it you can use the following command:
-
-```
-go get github.com/wawandco/facto/cmd/facto@latest
-```
-
-The CLI allows you to generate factory files based on a given name. For example:
-
-```sh
-facto generate user
-# Generates factories/user.go
-```
-### Facto & Ox
-Facto provides a plugin for the Ox CLI plugin system. To use it add the following to your `cmd/ox/main.go` file:
-
-```go
-import (
-    ...
-    fox "github.com/wawandco/facto/ox" // Add the facto ox package, we called it fox here 😉
-)
-
-func main() {
-    // You may have other plugins here.
-    //...
-    cli.Use(fox.Plugin{}) // Add the facto Ox plugin.
-
-    err := cli.Run(context.Background(), os.Args)
-	if err != nil {
-		log.Fatal(err)
-	}
 }
 ```
 
-Once added you can use facto with Ox within the `generate` command, you can see that invoking the `generate` command will list `factory` as a generator.
+### Custom UUID Generator
 
-```sh
+By default, `NamedUUID` returns a 16-byte slice. To use a different UUID library, set `h.UUIDGenerator`:
+
+```go
+// Using google/uuid
+import "github.com/google/uuid"
+
+func UserFactory(h facto.Helper) facto.Product {
+    h.UUIDGenerator = func() []byte {
+        return uuid.Must(uuid.NewRandom())[:]
+    }
+
+    user := User{
+        ID: h.NamedUUID("user_id"),
+    }
+    return facto.Product(user)
+}
+
+// Or using gofrs/uuid
+import "github.com/gofrs/uuid/v5"
+
+func CompanyFactory(h facto.Helper) facto.Product {
+    h.UUIDGenerator = func() []byte {
+        u, _ := uuid.NewV4()
+        return u.Bytes()
+    }
+
+    company := Company{
+        ID: h.NamedUUID("company_id"),
+    }
+    return facto.Product(company)
+}
+```
+
+If `UUIDGenerator` is nil (the default), Facto uses a built-in crypto/rand-based generator.
+
+## Fake Data Generation
+
+Generate realistic-looking test data using `h.Faker`:
+
+```go
+// factories/event.go
+package factories
+
+import (
+    "github.com/wawandco/facto"
+)
+
+func EventFactory(h facto.Helper) facto.Product {
+    event := Event{
+        Name:         h.Faker.FirstName(),
+        Type:         "Sports",
+        ContactEmail: h.Faker.Email(),
+        Company:      h.Faker.Company(),
+        Address:      h.Faker.Address().Address,
+    }
+
+    return facto.Product(event)
+}
+```
+
+Fake data is powered by [Gofakeit](https://github.com/brianvoe/gofakeit). See the [full list of generators](https://github.com/brianvoe/gofakeit/tree/v7.2.1#functions).
+
+## Random Selection with OneOf
+
+Randomly select from a list of values:
+
+```go
+// factories/event.go
+package factories
+
+import (
+    "github.com/wawandco/facto"
+)
+
+func EventFactory(h facto.Helper) facto.Product {
+    event := Event{
+        Name: h.Faker.FirstName(),
+        // Randomly picks one of the provided values
+        Type: h.OneOf(TypeSports, TypeMusic, TypeConcert).(EventType),
+    }
+
+    return facto.Product(event)
+}
+```
+
+## CLI
+
+Install the Facto CLI to generate factory files:
+
+```bash
+go install github.com/wawandco/facto/cmd/facto@latest
+```
+
+Generate a factory:
+
+```bash
+facto generate user
+# Generates factories/user.go
+```
+
+## Ox Plugin
+
+Facto provides a plugin for the [Ox](https://github.com/wawandco/ox) CLI:
+
+```go
+// cmd/ox/main.go
+package main
+
+import (
+    // ...
+    fox "github.com/wawandco/facto/ox"
+)
+
+func main() {
+    cli.Use(fox.Plugin{}) // Add the facto plugin
+    
+    err := cli.Run(context.Background(), os.Args)
+    if err != nil {
+        log.Fatal(err)
+    }
+}
+```
+
+Now `factory` appears as a generator:
+
+```bash
 $ ox generate
-[info] Using cmd/ox/main.go
 
 Available Generators:
 
   Name          Plugin
   ----          ------
-  ox            ox/generate-cli-main
-  template      buffalo/generate-template
-  model         buffalo/generate-model
-  action        buffalo/generate-action
-  resource      buffalo/generate-resource
-  task          grift/generate-task
-  migration     liquo/generate-migration
-  factory       facto ## (this is the one you are looking for)
+  factory       facto  # <-- this one
 ```
 
-Which you can then use to generate your factories with:
+Generate factories with Ox:
 
+```bash
+ox generate factory [name]
 ```
-$ ox generate factory [name]
-```
-
--------------
-### Pending
-- Create API: Create a new object in the database.
-- Review terminology from Factory bot.
-- Explain the "Magic" constraints and some principles.
