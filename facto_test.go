@@ -5,7 +5,6 @@ import (
 	"sync"
 	"testing"
 
-	"github.com/gofrs/uuid/v5"
 	"github.com/wawandco/facto"
 )
 
@@ -58,7 +57,7 @@ func TestBuild(t *testing.T) {
 
 	t.Run("NamedUUID", func(t *testing.T) {
 		c := facto.Build(DepartmentFactory).(department)
-		if c.CompanyID.String() != c.Company.ID.String() {
+		if string(c.CompanyID) != string(c.Company.ID) {
 			t.Errorf("companyID should match")
 		}
 	})
@@ -171,7 +170,7 @@ type event struct {
 }
 
 type company struct {
-	ID           uuid.UUID
+	ID           string
 	Name         string
 	Address      string
 	ContactEmail string
@@ -180,8 +179,17 @@ type company struct {
 
 type department struct {
 	Name      string
-	CompanyID uuid.UUID
+	CompanyID string
 	Company   company
+}
+
+// uuidBytesToString converts a 16-byte UUID to string format
+func uuidBytesToString(b []byte) string {
+	if len(b) != 16 {
+		return ""
+	}
+	return fmt.Sprintf("%x-%x-%x-%x-%x",
+		b[0:4], b[4:6], b[6:8], b[8:10], b[10:16])
 }
 
 type OtherUser struct {
@@ -229,7 +237,7 @@ func EventFactory(f facto.Helper) facto.Product {
 
 func CompanyFactory(h facto.Helper) facto.Product {
 	u := company{
-		ID:           h.NamedUUID("company_id"),
+		ID:           uuidBytesToString(h.NamedUUID("company_id")),
 		Name:         h.Faker.Name(),
 		Address:      h.Faker.Address().Address,
 		ContactEmail: h.Faker.Email(),
@@ -244,7 +252,7 @@ func CompanyFactory(h facto.Helper) facto.Product {
 func DepartmentFactory(f facto.Helper) facto.Product {
 	u := department{
 		Name:      "Technology",
-		CompanyID: f.NamedUUID("company_id"),
+		CompanyID: uuidBytesToString(f.NamedUUID("company_id")),
 		Company:   facto.Build(CompanyFactory).(company),
 	}
 
